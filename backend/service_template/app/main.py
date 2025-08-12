@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.config.settings import settings
 from app.api.routes.v1 import router as v1_router
-from app.controllers import ItemsController
+from app.controllers import ItemsController, HealthController
 
 
 def create_app() -> FastAPI:
@@ -12,6 +12,7 @@ def create_app() -> FastAPI:
 
     # Wire shared dependencies
     application.state.items_controller = ItemsController()
+    application.state.health_controller = HealthController()
 
     return application
 
