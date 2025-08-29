@@ -1,0 +1,28 @@
+from sqlalchemy import (
+    Column, Integer, String, Date, Boolean, ForeignKey, DECIMAL, TIMESTAMP
+)
+from sqlalchemy.orm import relationship
+from .base import Base
+
+class Client_Status(Base):
+    __tablename__ = "client_status"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    clients = relationship("Client", back_populates="status_rel")
+
+class Installment(Base):
+    __tablename__ = "installment"
+
+    id = Column(Integer, primary_key=True)
+    credit_id = Column(Integer, ForeignKey("credit.id"), nullable=False)
+    installment_state_id = Column(Integer, ForeignKey("installment_state.id"), nullable=False)
+    installment_number = Column(Integer, nullable=False)
+    installment_value = Column(Integer, nullable=False)
+    due_date = Column(Date, nullable=False)
+    payment_date = Column(Date, nullable=False)
+    created_at = Column(TIMESTAMP)
+    updated_at = Column(TIMESTAMP)
+
+    credit = relationship("Credit", back_populates="installments")
+    installment_state = relationship("Installment_State", back_populates="installments")
+    portfolios = relationship("Portfolio", back_populates="installment")
