@@ -10,3 +10,6 @@ class Client_State(Base):
     name = Column(String, nullable=False)
 
     clients = relationship("Client", back_populates="client_state")
+
+    def __repr__(self):
+        return f"<Client_State(id={self.id}, name={self.name})>"

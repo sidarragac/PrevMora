@@ -18,3 +18,6 @@ class Reconciliation(Base):
 
     payment_channel = relationship("Payment_Channel", back_populates="reconciliations")
     credit = relationship("Credit", back_populates="reconciliations", foreign_keys=[payment_reference])
+
+    def __repr__(self):
+        return f"<Reconciliation(id={self.id}, payment_amount={self.payment_amount}, transaction_date={self.transaction_date})>"

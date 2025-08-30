@@ -23,3 +23,9 @@ class Credit(Base):
     installments = relationship("Installment", back_populates="credit")
     alerts = relationship("Alert", back_populates="credits")
     reconciliations = relationship("Reconciliation", back_populates="credit", foreign_keys="[Reconciliation.payment_reference]")
+    
+    def __repr__(self):
+        return f"<Credit(id={self.id}, client_id={self.client_id}, credit_state_id={self.credit_state_id}, " \
+           f"disbursement_amount={self.disbursement_amount}, payment_reference={self.payment_reference}, " \
+           f"disbursement_date={self.disbursement_date}, interest_rate={self.interest_rate}, " \
+           f"total_quotas={self.total_quotas})>"

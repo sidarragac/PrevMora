@@ -19,3 +19,7 @@ class Client(Base):
     credits = relationship("Credit", back_populates="client")
     # For more information about this comment go to the file Alert.py
     # alerts = relationship("Alert", back_populates="client")
+
+    def __repr__(self):
+        return f"<Client(id={self.id}, client_state={self.client_state}, name={self.name}, " \
+           f"document={self.document}, phone={self.phone}, email={self.email}, address={self.address}, zone={self.zone})>"

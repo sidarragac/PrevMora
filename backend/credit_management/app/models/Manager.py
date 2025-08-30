@@ -14,3 +14,6 @@ class Manager(Base):
 
     manager_zone = relationship("Manager_Zone", back_populates="managers")
     portfolios = relationship("Portfolio", back_populates="manager")
+
+    def __repr__(self):
+        return f"<Manager(id={self.id}, name={self.name}, manager_zone_id={self.manager_zone_id})>"

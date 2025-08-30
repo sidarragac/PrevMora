@@ -20,3 +20,6 @@ class Installment(Base):
     credit = relationship("Credit", back_populates="installments")
     installment_state = relationship("Installment_State", back_populates="installments")
     portfolios = relationship("Portfolio", back_populates="installment")
+
+    def __repr__(self):
+        return f"<Installment(id={self.id}, installment_number={self.installment_number}, due_date={self.due_date})>"

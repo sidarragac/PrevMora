@@ -22,3 +22,6 @@ class Portfolio(Base):
     manager = relationship("Manager", back_populates="portfolios")
     contact_method = relationship("Contact_Method", back_populates="portfolios")
     contact_result = relationship("Contact_Result", back_populates="portfolios")
+
+    def __repr__(self):
+        return f"<Portfolio(id={self.id}, management_date={self.management_date}, observation={self.observation})>"

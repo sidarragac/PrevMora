@@ -10,3 +10,6 @@ class Manager_Zone(Base):
     name = Column(String, nullable=False)
 
     managers = relationship("Manager", back_populates="manager_zone")
+
+    def __repr__(self):
+        return f"<Manager_Zone(id={self.id}, name={self.name})>"

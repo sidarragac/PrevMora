@@ -10,3 +10,7 @@ class Contact_Method(Base):
     name = Column(String, nullable=False)
 
     portfolios = relationship("Portfolio", back_populates="contact_method")
+
+
+    def __repr__(self):
+        return f"<Contact_Method(id={self.id}, name={self.name})>"

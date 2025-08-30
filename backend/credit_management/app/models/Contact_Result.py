@@ -11,3 +11,6 @@ class Contact_Result(Base):
     name = Column(String, nullable=False)
     
     portfolios = relationship("Portfolio", back_populates="contact_result")
+
+    def __repr__(self):
+        return f"<Contact_Result(id={self.id}, name={self.name})>"
