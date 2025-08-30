@@ -4,12 +4,6 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from .base import Base
 
-class Client_Status(Base):
-    __tablename__ = "client_status"
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    clients = relationship("Client", back_populates="status_rel")
-
 class Installment(Base):
     __tablename__ = "installment"
 

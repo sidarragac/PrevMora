@@ -5,6 +5,7 @@
 # This module is part of SQLAlchemy and is released under
 # the MIT License: https://www.opensource.org/licenses/mit-license.php
 # mypy: ignore-errors
+
 from ... import exc
 from ...testing.provision import configure_follower
 from ...testing.provision import create_db

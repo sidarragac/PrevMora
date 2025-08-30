@@ -316,13 +316,6 @@ class SuiteRequirements(Requirements):
         return exclusions.closed()
 
     @property
-    def ctes_with_values(self):
-        """target database supports CTES that ride on top of a VALUES
-        clause."""
-
-        return exclusions.closed()
-
-    @property
     def ctes_on_dml(self):
         """target database supports CTES which consist of INSERT, UPDATE
         or DELETE *within* the CTE, e.g. WITH x AS (UPDATE....)"""
@@ -666,12 +659,6 @@ class SuiteRequirements(Requirements):
         return exclusions.closed()
 
     @property
-    def temp_table_comment_reflection(self):
-        """indicates if database supports comments on temp tables and
-        the dialect can reflect them"""
-        return exclusions.closed()
-
-    @property
     def comment_reflection(self):
         """Indicates if the database support table comment reflection"""
         return exclusions.closed()
@@ -835,11 +822,6 @@ class SuiteRequirements(Requirements):
         """Target database must support VARCHAR with no length"""
 
         return exclusions.open()
-
-    @property
-    def nvarchar_types(self):
-        """target database supports NVARCHAR and NCHAR as an actual datatype"""
-        return exclusions.closed()
 
     @property
     def unicode_data_no_special_types(self):
@@ -1031,13 +1013,6 @@ class SuiteRequirements(Requirements):
     @property
     def autocommit(self):
         """target dialect supports 'AUTOCOMMIT' as an isolation_level"""
-        return exclusions.closed()
-
-    @property
-    def skip_autocommit_rollback(self):
-        """target dialect supports the detect_autocommit_setting() method and
-        uses the default implementation of do_rollback()"""
-
         return exclusions.closed()
 
     @property

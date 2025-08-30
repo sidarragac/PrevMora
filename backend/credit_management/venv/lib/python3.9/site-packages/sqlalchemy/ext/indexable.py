@@ -216,7 +216,6 @@ for indexed access, instead of the usual index operator of ``->``::
     >>> query = session.query(Person).filter(Person.age < 20)
 
 The above query will render:
-
 .. sourcecode:: sql
 
     SELECT person.id, person.data

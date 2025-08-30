@@ -80,7 +80,6 @@ from ..util.typing import Literal
 from ..util.typing import ParamSpec
 from ..util.typing import Self
 
-
 if typing.TYPE_CHECKING:
     from ._typing import _ByArgument
     from ._typing import _ColumnExpressionArgument
@@ -89,7 +88,6 @@ if typing.TYPE_CHECKING:
     from ._typing import _InfoType
     from ._typing import _PropagateAttrsType
     from ._typing import _TypeEngineArgument
-    from .base import _EntityNamespace
     from .base import ColumnSet
     from .cache_key import _CacheKeyTraversalType
     from .cache_key import CacheKey
@@ -118,7 +116,6 @@ if typing.TYPE_CHECKING:
     from ..engine.interfaces import CoreExecuteOptionsParameter
     from ..engine.interfaces import SchemaTranslateMapType
     from ..engine.result import Result
-
 
 _NUMERIC = Union[float, Decimal]
 _NUMBER = Union[float, int, Decimal]
@@ -462,7 +459,7 @@ class ClauseElement(
         return self
 
     @property
-    def _constructor(self):  # type: ignore[override]
+    def _constructor(self):
         """return the 'constructor' for this ClauseElement.
 
         This is for the purposes for creating a new object of
@@ -501,8 +498,8 @@ class ClauseElement(
             self = self._is_clone_of
         return self
 
-    @util.ro_non_memoized_property
-    def entity_namespace(self) -> _EntityNamespace:
+    @property
+    def entity_namespace(self):
         raise AttributeError(
             "This SQL expression has no entity namespace "
             "with which to filter from."
@@ -695,7 +692,6 @@ class ClauseElement(
         else:
             elem_cache_key = None
 
-        extracted_params: Optional[Sequence[BindParameter[Any]]]
         if elem_cache_key is not None:
             if TYPE_CHECKING:
                 assert compiled_cache is not None
@@ -752,8 +748,6 @@ class ClauseElement(
             return self._negate()
 
     def _negate(self) -> ClauseElement:
-        # TODO: this code is uncovered and in all likelihood is not included
-        # in any codepath.  So this should raise NotImplementedError in 2.1
         grouped = self.self_group(against=operators.inv)
         assert isinstance(grouped, ColumnElement)
         return UnaryExpression(grouped, operator=operators.inv)
@@ -1445,10 +1439,6 @@ class ColumnElement(
 
     _alt_names: Sequence[str] = ()
 
-    if TYPE_CHECKING:
-
-        def _ungroup(self) -> ColumnElement[_T]: ...
-
     @overload
     def self_group(self, against: None = None) -> ColumnElement[_T]: ...
 
@@ -1483,8 +1473,7 @@ class ColumnElement(
             grouped = self.self_group(against=operators.inv)
             assert isinstance(grouped, ColumnElement)
             return UnaryExpression(
-                grouped,
-                operator=operators.inv,
+                grouped, operator=operators.inv, wraps_column_expression=True
             )
 
     type: TypeEngine[_T]
@@ -2135,8 +2124,8 @@ class BindParameter(roles.InElementRole, KeyedColumnElement[_T]):
         else:
             return self
 
-    def _with_binary_element_type(self, type_: TypeEngine[Any]) -> Self:
-        c: Self = ClauseElement._clone(self)
+    def _with_binary_element_type(self, type_):
+        c = ClauseElement._clone(self)
         c.type = type_
         return c
 
@@ -2306,7 +2295,7 @@ class TextClause(
     _allow_label_resolve = False
 
     @property
-    def _is_star(self):  # type: ignore[override]
+    def _is_star(self):
         return self.text == "*"
 
     def __init__(self, text: str):
@@ -3005,7 +2994,9 @@ class ExpressionClauseList(OperatorExpression[_T]):
     def _negate(self) -> Any:
         grouped = self.self_group(against=operators.inv)
         assert isinstance(grouped, ColumnElement)
-        return UnaryExpression(grouped, operator=operators.inv)
+        return UnaryExpression(
+            grouped, operator=operators.inv, wraps_column_expression=True
+        )
 
 
 class BooleanClauseList(ExpressionClauseList[bool]):
@@ -3623,18 +3614,15 @@ class UnaryExpression(ColumnElement[_T]):
         ("modifier", InternalTraversal.dp_operator),
     ]
 
-    element: ColumnElement[Any]
-    operator: Optional[OperatorType]
-    modifier: Optional[OperatorType]
+    element: ClauseElement
 
     def __init__(
         self,
         element: ColumnElement[Any],
-        *,
         operator: Optional[OperatorType] = None,
         modifier: Optional[OperatorType] = None,
         type_: Optional[_TypeEngineArgument[_T]] = None,
-        wraps_column_expression: bool = False,  # legacy, not used as of 2.0.42
+        wraps_column_expression: bool = False,
     ):
         self.operator = operator
         self.modifier = modifier
@@ -3647,12 +3635,7 @@ class UnaryExpression(ColumnElement[_T]):
         # know how to get the overloads to express that correctly
         self.type = type_api.to_instance(type_)  # type: ignore
 
-    def _wraps_unnamed_column(self):
-        ungrouped = self.element._ungroup()
-        return (
-            not isinstance(ungrouped, NamedColumn)
-            or ungrouped._non_anon_label is None
-        )
+        self.wraps_column_expression = wraps_column_expression
 
     @classmethod
     def _create_nulls_first(
@@ -3662,6 +3645,7 @@ class UnaryExpression(ColumnElement[_T]):
         return UnaryExpression(
             coercions.expect(roles.ByOfRole, column),
             modifier=operators.nulls_first_op,
+            wraps_column_expression=False,
         )
 
     @classmethod
@@ -3672,6 +3656,7 @@ class UnaryExpression(ColumnElement[_T]):
         return UnaryExpression(
             coercions.expect(roles.ByOfRole, column),
             modifier=operators.nulls_last_op,
+            wraps_column_expression=False,
         )
 
     @classmethod
@@ -3681,6 +3666,7 @@ class UnaryExpression(ColumnElement[_T]):
         return UnaryExpression(
             coercions.expect(roles.ByOfRole, column),
             modifier=operators.desc_op,
+            wraps_column_expression=False,
         )
 
     @classmethod
@@ -3691,6 +3677,7 @@ class UnaryExpression(ColumnElement[_T]):
         return UnaryExpression(
             coercions.expect(roles.ByOfRole, column),
             modifier=operators.asc_op,
+            wraps_column_expression=False,
         )
 
     @classmethod
@@ -3705,6 +3692,7 @@ class UnaryExpression(ColumnElement[_T]):
             col_expr,
             operator=operators.distinct_op,
             type_=col_expr.type,
+            wraps_column_expression=False,
         )
 
     @classmethod
@@ -3719,6 +3707,7 @@ class UnaryExpression(ColumnElement[_T]):
             col_expr,
             operator=operators.bitwise_not_op,
             type_=col_expr.type,
+            wraps_column_expression=False,
         )
 
     @property
@@ -3732,15 +3721,16 @@ class UnaryExpression(ColumnElement[_T]):
     def _from_objects(self) -> List[FromClause]:
         return self.element._from_objects
 
-    def _negate(self) -> ColumnElement[Any]:
+    def _negate(self):
         if self.type._type_affinity is type_api.BOOLEANTYPE._type_affinity:
             return UnaryExpression(
                 self.self_group(against=operators.inv),
                 operator=operators.inv,
                 type_=type_api.BOOLEANTYPE,
+                wraps_column_expression=self.wraps_column_expression,
             )
         else:
-            return ColumnElement._negate(self)
+            return ClauseElement._negate(self)
 
     def self_group(
         self, against: Optional[OperatorType] = None
@@ -3777,6 +3767,7 @@ class CollectionAggregate(UnaryExpression[_T]):
             col_expr,
             operator=operators.any_op,
             type_=type_api.BOOLEANTYPE,
+            wraps_column_expression=False,
         )
 
     @classmethod
@@ -3792,6 +3783,7 @@ class CollectionAggregate(UnaryExpression[_T]):
             col_expr,
             operator=operators.all_op,
             type_=type_api.BOOLEANTYPE,
+            wraps_column_expression=False,
         )
 
     # operate and reverse_operate are hardwired to
@@ -3826,6 +3818,7 @@ class AsBoolean(WrapsColumnExpression[bool], UnaryExpression[bool]):
         self.operator = operator
         self.negate = negate
         self.modifier = None
+        self.wraps_column_expression = True
         self._is_implicitly_boolean = element._is_implicitly_boolean
 
     @property
@@ -4048,11 +4041,13 @@ class GroupedElement(DQLDMLClauseElement):
 
     __visit_name__ = "grouping"
 
+    element: ClauseElement
+
     def self_group(self, against: Optional[OperatorType] = None) -> Self:
         return self
 
-    def _ungroup(self) -> ClauseElement:
-        raise NotImplementedError()
+    def _ungroup(self):
+        return self.element._ungroup()
 
 
 class Grouping(GroupedElement, ColumnElement[_T]):
@@ -4080,10 +4075,6 @@ class Grouping(GroupedElement, ColumnElement[_T]):
 
     def _with_binary_element_type(self, type_):
         return self.__class__(self.element._with_binary_element_type(type_))
-
-    def _ungroup(self) -> ColumnElement[_T]:
-        assert isinstance(self.element, ColumnElement)
-        return self.element._ungroup()
 
     @util.memoized_property
     def _is_implicitly_boolean(self):
@@ -4796,11 +4787,11 @@ class Label(roles.LabeledColumnExprRole[_T], NamedColumn[_T]):
             return self
 
     @property
-    def primary_key(self):  # type: ignore[override]
+    def primary_key(self):
         return self.element.primary_key
 
     @property
-    def foreign_keys(self):  # type: ignore[override]
+    def foreign_keys(self):
         return self.element.foreign_keys
 
     def _copy_internals(
@@ -4933,7 +4924,7 @@ class ColumnClause(
     _is_multiparam_column = False
 
     @property
-    def _is_star(self):  # type: ignore[override]
+    def _is_star(self):
         return self.is_literal and self.name == "*"
 
     def __init__(

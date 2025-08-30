@@ -4,7 +4,9 @@
 #
 # This module is part of SQLAlchemy and is released under
 # the MIT License: https://www.opensource.org/licenses/mit-license.php
-"""Defines :class:`_engine.Connection` and :class:`_engine.Engine`."""
+"""Defines :class:`_engine.Connection` and :class:`_engine.Engine`.
+
+"""
 from __future__ import annotations
 
 import contextlib
@@ -1112,16 +1114,10 @@ class Connection(ConnectionEventsTarget, inspection.Inspectable["Inspector"]):
         if self._still_open_and_dbapi_connection_is_valid:
             if self._echo:
                 if self._is_autocommit_isolation():
-                    if self.dialect.skip_autocommit_rollback:
-                        self._log_info(
-                            "ROLLBACK will be skipped by "
-                            "skip_autocommit_rollback"
-                        )
-                    else:
-                        self._log_info(
-                            "ROLLBACK using DBAPI connection.rollback(); "
-                            "set skip_autocommit_rollback to prevent fully"
-                        )
+                    self._log_info(
+                        "ROLLBACK using DBAPI connection.rollback(), "
+                        "DBAPI should ignore due to autocommit mode"
+                    )
                 else:
                     self._log_info("ROLLBACK")
             try:
@@ -1137,7 +1133,7 @@ class Connection(ConnectionEventsTarget, inspection.Inspectable["Inspector"]):
             if self._is_autocommit_isolation():
                 self._log_info(
                     "COMMIT using DBAPI connection.commit(), "
-                    "has no effect due to autocommit mode"
+                    "DBAPI should ignore due to autocommit mode"
                 )
             else:
                 self._log_info("COMMIT")

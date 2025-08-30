@@ -300,9 +300,7 @@ class LambdaElement(elements.ClauseElement):
             while lambda_element is not None:
                 rec = lambda_element._rec
                 if rec.bindparam_trackers:
-                    tracker_instrumented_fn = (
-                        rec.tracker_instrumented_fn  # type:ignore [union-attr] # noqa: E501
-                    )
+                    tracker_instrumented_fn = rec.tracker_instrumented_fn
                     for tracker in rec.bindparam_trackers:
                         tracker(
                             lambda_element.fn,
@@ -604,7 +602,7 @@ class StatementLambdaElement(
         return self._rec_expected_expr
 
     @property
-    def _with_options(self):  # type: ignore[override]
+    def _with_options(self):
         return self._proxied._with_options
 
     @property
@@ -612,7 +610,7 @@ class StatementLambdaElement(
         return self._proxied._effective_plugin_target
 
     @property
-    def _execution_options(self):  # type: ignore[override]
+    def _execution_options(self):
         return self._proxied._execution_options
 
     @property
@@ -620,27 +618,27 @@ class StatementLambdaElement(
         return self._proxied._all_selected_columns
 
     @property
-    def is_select(self):  # type: ignore[override]
+    def is_select(self):
         return self._proxied.is_select
 
     @property
-    def is_update(self):  # type: ignore[override]
+    def is_update(self):
         return self._proxied.is_update
 
     @property
-    def is_insert(self):  # type: ignore[override]
+    def is_insert(self):
         return self._proxied.is_insert
 
     @property
-    def is_text(self):  # type: ignore[override]
+    def is_text(self):
         return self._proxied.is_text
 
     @property
-    def is_delete(self):  # type: ignore[override]
+    def is_delete(self):
         return self._proxied.is_delete
 
     @property
-    def is_dml(self):  # type: ignore[override]
+    def is_dml(self):
         return self._proxied.is_dml
 
     def spoil(self) -> NullLambdaStatement:

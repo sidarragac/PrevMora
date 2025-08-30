@@ -1056,7 +1056,7 @@ class Mapper(
 
     """
 
-    primary_key: Tuple[ColumnElement[Any], ...]
+    primary_key: Tuple[Column[Any], ...]
     """An iterable containing the collection of :class:`_schema.Column`
     objects
     which comprise the 'primary key' of the mapped table, from the
@@ -2554,7 +2554,7 @@ class Mapper(
         if spec == "*":
             mappers = list(self.self_and_descendants)
         elif spec:
-            mapper_set: Set[Mapper[Any]] = set()
+            mapper_set = set()
             for m in util.to_list(spec):
                 m = _class_to_mapper(m)
                 if not m.isa(self):
@@ -3428,11 +3428,9 @@ class Mapper(
         return self.class_manager.mapper.base_mapper
 
     def _result_has_identity_key(self, result, adapter=None):
-        pk_cols: Sequence[ColumnElement[Any]]
-        if adapter is not None:
-            pk_cols = [adapter.columns[c] for c in self.primary_key]
-        else:
-            pk_cols = self.primary_key
+        pk_cols: Sequence[ColumnClause[Any]] = self.primary_key
+        if adapter:
+            pk_cols = [adapter.columns[c] for c in pk_cols]
         rk = result.keys()
         for col in pk_cols:
             if col not in rk:
@@ -3457,11 +3455,9 @@ class Mapper(
             for the "row" argument
 
         """
-        pk_cols: Sequence[ColumnElement[Any]]
-        if adapter is not None:
-            pk_cols = [adapter.columns[c] for c in self.primary_key]
-        else:
-            pk_cols = self.primary_key
+        pk_cols: Sequence[ColumnClause[Any]] = self.primary_key
+        if adapter:
+            pk_cols = [adapter.columns[c] for c in pk_cols]
 
         mapping: RowMapping
         if hasattr(row, "_mapping"):

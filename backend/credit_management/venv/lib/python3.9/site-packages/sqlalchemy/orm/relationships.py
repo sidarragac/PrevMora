@@ -486,7 +486,8 @@ class RelationshipProperty(
         else:
             self._overlaps = ()
 
-        self.cascade = cascade
+        # mypy ignoring the @property setter
+        self.cascade = cascade  # type: ignore
 
         self.back_populates = back_populates
 

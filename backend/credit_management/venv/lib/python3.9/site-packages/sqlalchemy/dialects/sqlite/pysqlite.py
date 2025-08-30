@@ -393,15 +393,10 @@ connection when it is created. That is accomplished with an event listener::
             print(conn.scalar(text("SELECT UDF()")))
 
 """  # noqa
-from __future__ import annotations
 
 import math
 import os
 import re
-from typing import cast
-from typing import Optional
-from typing import TYPE_CHECKING
-from typing import Union
 
 from .base import DATE
 from .base import DATETIME
@@ -410,13 +405,6 @@ from ... import exc
 from ... import pool
 from ... import types as sqltypes
 from ... import util
-
-if TYPE_CHECKING:
-    from ...engine.interfaces import DBAPIConnection
-    from ...engine.interfaces import DBAPICursor
-    from ...engine.interfaces import DBAPIModule
-    from ...engine.url import URL
-    from ...pool.base import PoolProxiedConnection
 
 
 class _SQLite_pysqliteTimeStamp(DATETIME):
@@ -471,7 +459,7 @@ class SQLiteDialect_pysqlite(SQLiteDialect):
         return sqlite
 
     @classmethod
-    def _is_url_file_db(cls, url: URL):
+    def _is_url_file_db(cls, url):
         if (url.database and url.database != ":memory:") and (
             url.query.get("mode", None) != "memory"
         ):
@@ -501,9 +489,6 @@ class SQLiteDialect_pysqlite(SQLiteDialect):
         else:
             dbapi_connection.isolation_level = ""
             return super().set_isolation_level(dbapi_connection, level)
-
-    def detect_autocommit_setting(self, dbapi_connection):
-        return dbapi_connection.isolation_level is None
 
     def on_connect(self):
         def regexp(a, b):
@@ -604,13 +589,7 @@ class SQLiteDialect_pysqlite(SQLiteDialect):
 
         return ([filename], pysqlite_opts)
 
-    def is_disconnect(
-        self,
-        e: DBAPIModule.Error,
-        connection: Optional[Union[PoolProxiedConnection, DBAPIConnection]],
-        cursor: Optional[DBAPICursor],
-    ) -> bool:
-        self.dbapi = cast("DBAPIModule", self.dbapi)
+    def is_disconnect(self, e, connection, cursor):
         return isinstance(
             e, self.dbapi.ProgrammingError
         ) and "Cannot operate on a closed database." in str(e)

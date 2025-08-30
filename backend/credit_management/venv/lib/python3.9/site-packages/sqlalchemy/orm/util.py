@@ -1566,7 +1566,7 @@ class Bundle(
 
     _propagate_attrs: _PropagateAttrsType = util.immutabledict()
 
-    proxy_set = util.EMPTY_SET
+    proxy_set = util.EMPTY_SET  # type: ignore
 
     exprs: List[_ColumnsClauseElement]
 

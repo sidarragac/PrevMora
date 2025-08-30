@@ -1358,15 +1358,15 @@ class _NoResultMetaData(ResultMetaData):
         self._we_dont_return_rows()
 
     @property
-    def _keymap(self):  # type: ignore[override]
+    def _keymap(self):
         self._we_dont_return_rows()
 
     @property
-    def _key_to_index(self):  # type: ignore[override]
+    def _key_to_index(self):
         self._we_dont_return_rows()
 
     @property
-    def _processors(self):  # type: ignore[override]
+    def _processors(self):
         self._we_dont_return_rows()
 
     @property

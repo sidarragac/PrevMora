@@ -745,7 +745,9 @@ class FunctionElement(Executable, ColumnElement[_T], FromClause, Generative):
         # expressions against getitem.  This may need to be made
         # more portable if in the future we support other DBs
         # besides postgresql.
-        if against in (operators.getitem, operators.json_getitem_op):
+        if against is operators.getitem and isinstance(
+            self.type, sqltypes.ARRAY
+        ):
             return Grouping(self)
         else:
             return super().self_group(against=against)
@@ -787,7 +789,7 @@ class FunctionAsBinary(BinaryExpression[Any]):
         self.type = sqltypes.BOOLEANTYPE
         self.negate = None
         self._is_implicitly_boolean = True
-        self.modifiers = util.immutabledict({})
+        self.modifiers = {}
 
     @property
     def left_expr(self) -> ColumnElement[Any]:

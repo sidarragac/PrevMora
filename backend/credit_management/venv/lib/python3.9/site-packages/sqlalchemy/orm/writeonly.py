@@ -236,11 +236,15 @@ class WriteOnlyAttributeImpl(
         return DynamicCollectionAdapter(data)  # type: ignore[return-value]
 
     @util.memoized_property
-    def _append_token(self) -> attributes.AttributeEventToken:
+    def _append_token(  # type:ignore[override]
+        self,
+    ) -> attributes.AttributeEventToken:
         return attributes.AttributeEventToken(self, attributes.OP_APPEND)
 
     @util.memoized_property
-    def _remove_token(self) -> attributes.AttributeEventToken:
+    def _remove_token(  # type:ignore[override]
+        self,
+    ) -> attributes.AttributeEventToken:
         return attributes.AttributeEventToken(self, attributes.OP_REMOVE)
 
     def fire_append_event(

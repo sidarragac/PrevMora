@@ -1341,7 +1341,7 @@ class Join(roles.DMLTableRole, FromClause):
             c for c in self.right.c
         ]
 
-        primary_key.extend(
+        primary_key.extend(  # type: ignore
             sqlutil.reduce_columns(
                 (c for c in _columns if c.primary_key), self.onclause
             )
@@ -1747,7 +1747,7 @@ class AliasedReturnsRows(NoInit, NamedFromClause):
     def description(self) -> str:
         name = self.name
         if isinstance(name, _anonymous_label):
-            return "anon_1"
+            name = "anon_1"
 
         return name
 
@@ -1786,14 +1786,6 @@ class AliasedReturnsRows(NoInit, NamedFromClause):
 
 class FromClauseAlias(AliasedReturnsRows):
     element: FromClause
-
-    @util.ro_non_memoized_property
-    def description(self) -> str:
-        name = self.name
-        if isinstance(name, _anonymous_label):
-            return f"Anonymous alias of {self.element.description}"
-
-        return name
 
 
 class Alias(roles.DMLTableRole, FromClauseAlias):
@@ -2525,14 +2517,6 @@ class HasCTE(roles.HasCTERole, SelectsRows):
 
     _independent_ctes: Tuple[CTE, ...] = ()
     _independent_ctes_opts: Tuple[_CTEOpts, ...] = ()
-
-    name_cte_columns: bool = False
-    """indicates if this HasCTE as contained within a CTE should compel the CTE
-    to render the column names of this object in the WITH clause.
-
-    .. versionadded:: 2.0.42
-
-    """
 
     @_generative
     def add_cte(self, *ctes: CTE, nest_here: bool = False) -> Self:
@@ -3314,7 +3298,7 @@ class ForUpdateArg(ClauseElement):
             self.of = None
 
 
-class Values(roles.InElementRole, HasCTE, Generative, LateralFromClause):
+class Values(roles.InElementRole, Generative, LateralFromClause):
     """Represent a ``VALUES`` construct that can be used as a FROM element
     in a statement.
 
@@ -3335,9 +3319,7 @@ class Values(roles.InElementRole, HasCTE, Generative, LateralFromClause):
         ("_data", InternalTraversal.dp_dml_multi_values),
         ("name", InternalTraversal.dp_string),
         ("literal_binds", InternalTraversal.dp_boolean),
-    ] + HasCTE._has_ctes_traverse_internals
-
-    name_cte_columns = True
+    ]
 
     def __init__(
         self,
@@ -3360,10 +3342,6 @@ class Values(roles.InElementRole, HasCTE, Generative, LateralFromClause):
     @property
     def _column_types(self) -> List[TypeEngine[Any]]:
         return [col.type for col in self._column_args]
-
-    @util.ro_non_memoized_property
-    def _all_selected_columns(self) -> _SelectIterable:
-        return self._column_args
 
     @_generative
     def alias(self, name: Optional[str] = None, flat: bool = False) -> Self:
@@ -3394,7 +3372,7 @@ class Values(roles.InElementRole, HasCTE, Generative, LateralFromClause):
         return self
 
     @_generative
-    def lateral(self, name: Optional[str] = None) -> Self:
+    def lateral(self, name: Optional[str] = None) -> LateralFromClause:
         """Return a new :class:`_expression.Values` with the lateral flag set,
         so that
         it renders as LATERAL.
@@ -3511,8 +3489,6 @@ class ScalarValues(roles.InElementRole, GroupedElement, ColumnElement[Any]):
         def self_group(
             self, against: Optional[OperatorType] = None
         ) -> Self: ...
-
-        def _ungroup(self) -> ColumnElement[Any]: ...
 
 
 class SelectBase(
@@ -6800,8 +6776,9 @@ class ScalarSelect(
     def self_group(self, against: Optional[OperatorType] = None) -> Self:
         return self
 
-    def _ungroup(self) -> Self:
-        return self
+    if TYPE_CHECKING:
+
+        def _ungroup(self) -> Select[Any]: ...
 
     @_generative
     def correlate(
@@ -6889,6 +6866,7 @@ class Exists(UnaryExpression[bool]):
     """
 
     inherit_cache = True
+    element: Union[SelectStatementGrouping[Select[Any]], ScalarSelect[Any]]
 
     def __init__(
         self,
@@ -6914,6 +6892,7 @@ class Exists(UnaryExpression[bool]):
             s,
             operator=operators.exists,
             type_=type_api.BOOLEANTYPE,
+            wraps_column_expression=True,
         )
 
     @util.ro_non_memoized_property
@@ -6921,19 +6900,13 @@ class Exists(UnaryExpression[bool]):
         return []
 
     def _regroup(
-        self,
-        fn: Callable[[Select[Any]], Select[Any]],
-    ) -> ScalarSelect[Any]:
-
-        assert isinstance(self.element, ScalarSelect)
-        element = self.element.element
-        if not isinstance(element, Select):
-            raise exc.InvalidRequestError(
-                "Can only apply this operation to a plain SELECT construct"
-            )
+        self, fn: Callable[[Select[Any]], Select[Any]]
+    ) -> SelectStatementGrouping[Select[Any]]:
+        element = self.element._ungroup()
         new_element = fn(element)
 
-        return_value = new_element.scalar_subquery()
+        return_value = new_element.self_group(against=operators.exists)
+        assert isinstance(return_value, SelectStatementGrouping)
         return return_value
 
     def select(self) -> Select[Tuple[bool]]:
@@ -6988,6 +6961,7 @@ class Exists(UnaryExpression[bool]):
             :meth:`_sql.ScalarSelect.correlate_except`
 
         """
+
         e = self._clone()
         e.element = self._regroup(
             lambda element: element.correlate_except(*fromclauses)

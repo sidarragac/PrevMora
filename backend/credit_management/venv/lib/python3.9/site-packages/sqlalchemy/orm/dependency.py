@@ -7,7 +7,9 @@
 # mypy: ignore-errors
 
 
-"""Relationship dependencies."""
+"""Relationship dependencies.
+
+"""
 
 from __future__ import annotations
 

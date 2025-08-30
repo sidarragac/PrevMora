@@ -843,7 +843,7 @@ class InElementImpl(RoleImpl):
         )
 
     @util.preload_module("sqlalchemy.sql.elements")
-    def _literal_coercion(self, element, *, expr, operator, **kw):  # type: ignore[override] # noqa: E501
+    def _literal_coercion(self, element, *, expr, operator, **kw):
         if util.is_non_string_iterable(element):
             non_literal_expressions: Dict[
                 Optional[_ColumnExpressionArgument[Any]],
