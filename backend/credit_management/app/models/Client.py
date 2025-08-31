@@ -8,12 +8,12 @@ class Client(Base):
     __tablename__ = "client"
     id = Column(Integer, primary_key=True)
     client_state = Column(Integer, ForeignKey("client_state.id"), nullable=False)
-    name = Column(String, nullable=False)
-    document = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-    address = Column(String, nullable=False)
-    zone = Column(String, nullable=True)
+    name = Column(String(255), nullable=False)
+    document = Column(String(255), nullable=False)
+    phone = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False)
+    address = Column(String(255), nullable=False)
+    zone = Column(String(255), nullable=True)
 
     client_state = relationship("Client_State", back_populates="clients")
     credits = relationship("Credit", back_populates="client")

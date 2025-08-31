@@ -194,3 +194,49 @@ class Portfolio(Base):
     contact_result: Mapped['ContactResult'] = relationship('ContactResult', back_populates='portfolio')
     installment: Mapped['Installment'] = relationship('Installment', back_populates='portfolio')
     manager: Mapped['Manager'] = relationship('Manager', back_populates='portfolio')
+
+
+    # Begin Cors dinamic configuration
+    # @property
+    # def allowed_origins(self) -> list[str]:
+    #     if self.ENVIRONMENT == "local" or self.ENVIRONMENT == "development":
+    #         return ["*"]
+    #     else:
+    #         origins_str = config("ALLOWED_ORIGINS", default="")
+    #         if origins_str:
+    #             return [origin.strip() for origin in origins_str.split(",")]
+    #         else:
+    #             raise ValueError("ALLOWED_ORIGINS is not set properly or empty in the environment variables.")
+
+    # @property
+    # def allowed_methods(self) -> list[str]:
+    #     if self.ENVIRONMENT in ["local", "development"] or self.DEBUG:
+    #         # Allow all on development
+    #         return ["*"]
+    #     else:
+    #         return ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    
+    # @property
+    # def allowed_headers(self) -> list[str]:
+    #     if self.ENVIRONMENT in ["local", "development"] or self.DEBUG:
+    #         # Allow all headers on development
+    #         return ["*"]
+    #     else:
+    #         # Change to specific headers for production
+    #         return [
+    #             "Authorization",
+    #             "Content-Type", 
+    #             "X-Requested-With",
+    #             "Accept",
+    #             "Origin"
+    #         ]
+        
+    # @property
+    # def cors_config(self) -> dict:
+    #     return {
+    #         "allow_origins": self.allowed_origins,
+    #         "allow_credentials": self.IS_ALLOWED_CREDENTIALS,
+    #         "allow_methods": self.allowed_methods,
+    #         "allow_headers": self.allowed_headers,
+    #     }
+    # IS_ALLOWED_CREDENTIALS: bool = config("IS_ALLOWED_CREDENTIALS", cast=bool)

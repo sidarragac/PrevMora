@@ -7,7 +7,7 @@ from .base import Base
 class Manager_Zone(Base):
     __tablename__ = "manager_zone"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
 
     managers = relationship("Manager", back_populates="manager_zone")
 

@@ -8,7 +8,7 @@ class Alert_Type(Base):
     __tablename__ = "alert_type"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
     
     alerts = relationship("Alert", back_populates="alert_type")
 

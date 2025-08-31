@@ -9,7 +9,7 @@ class Manager(Base):
     __tablename__ = "manager"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
     manager_zone_id = Column(Integer, ForeignKey("manager_zone.id"), nullable=False)
 
     manager_zone = relationship("Manager_Zone", back_populates="managers")

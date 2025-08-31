@@ -13,7 +13,7 @@ class Portfolio(Base):
     contact_result_id = Column(Integer, ForeignKey("contact_result.id"), nullable=False)
     manager_id = Column(Integer, ForeignKey("manager.id"), nullable=False)
     management_date = Column(Date, nullable=False)
-    observation = Column(String, nullable=True)
+    observation = Column(String(255), nullable=True)
     payment_promise_date = Column(Date, nullable=True)
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)

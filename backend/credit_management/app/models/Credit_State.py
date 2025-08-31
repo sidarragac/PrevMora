@@ -7,7 +7,7 @@ from .base import Base
 class Credit_State(Base):
     __tablename__ = "credit_state"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
 
     credits = relationship("Credit", back_populates="credit_state")
 

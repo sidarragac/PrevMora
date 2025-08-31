@@ -7,7 +7,7 @@ from .base import Base
 class Payment_Channel(Base):
     __tablename__ = "payment_channel"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
 
     reconciliations = relationship("Reconciliation", back_populates="payment_channel")
 

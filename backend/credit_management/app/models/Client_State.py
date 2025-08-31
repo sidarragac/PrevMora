@@ -7,7 +7,7 @@ from .base import Base
 class Client_State(Base):
     __tablename__ = "client_state"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
 
     clients = relationship("Client", back_populates="client_state")
 

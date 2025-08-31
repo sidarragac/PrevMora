@@ -12,7 +12,7 @@ class Reconciliation(Base):
     payment_reference = Column(Integer, ForeignKey("credit.payment_reference"), nullable=False)
     payment_amount = Column(Integer, nullable=False)
     transaction_date = Column(Date, nullable=False)
-    observation = Column(String, nullable=True)
+    observation = Column(String(255), nullable=True)
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
 
