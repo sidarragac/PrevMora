@@ -37,7 +37,6 @@ async def upload_excel(
         loading_tasks[task_id] = {
             "status": "processing",
             "filename": file.filename,
-            "progress": 0,
             "results": None,
             "error": None
         }
@@ -61,22 +60,17 @@ async def upload_excel(
 async def process_excel_background(task_id: str, file_path: str, session: AsyncSession):
     try:
         loading_tasks[task_id]["status"] = "processing"
-        loading_tasks[task_id]["progress"] = 10
         
         loader = ExcelLoaderService()
-        
-        loading_tasks[task_id]["progress"] = 50
         
         results = await loader.load_excel_to_database(file_path, session)
         
         loading_tasks[task_id]["status"] = "completed"
-        loading_tasks[task_id]["progress"] = 100
         loading_tasks[task_id]["results"] = results
         
     except Exception as e:
         loading_tasks[task_id]["status"] = "error"
         loading_tasks[task_id]["error"] = str(e)
-        loading_tasks[task_id]["progress"] = 0
         
     finally:
         try:
