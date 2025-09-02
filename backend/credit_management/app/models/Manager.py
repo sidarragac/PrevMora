@@ -1,19 +1,24 @@
+import enum
 from sqlalchemy import (
-    Column, Integer, String, Date, Boolean, ForeignKey, DECIMAL, TIMESTAMP
+    Integer, String, Enum
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .base import Base
 
-# Is necesary document for manager?
+class ManagerZoneEnum(enum.Enum):
+    RURAL = "Rural"
+    URBAN = "Urbano"
+
 class Manager(Base):
-    __tablename__ = "manager"
+    __tablename__ = 'manager'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(255), nullable=False)
-    manager_zone_id = Column(Integer, ForeignKey("manager_zone.id"), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    # I think that the document is necesary for the manager
+    # document: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    manager_zone: Mapped[ManagerZoneEnum] = mapped_column(Enum(ManagerZoneEnum), nullable=False)
 
-    manager_zone = relationship("Manager_Zone", back_populates="managers")
-    portfolios = relationship("Portfolio", back_populates="manager")
+    portfolio: Mapped[list['Portfolio']] = relationship('Portfolio', back_populates='manager')
 
     def __repr__(self):
-        return f"<Manager(id={self.id}, name={self.name}, manager_zone_id={self.manager_zone_id})>"
+            return f"<Manager(id={self.id}, name={self.name}, manager_zone_id={self.manager_zone_id})>"

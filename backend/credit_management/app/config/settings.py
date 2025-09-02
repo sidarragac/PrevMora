@@ -16,6 +16,7 @@ class BackendBaseSettings(BaseSettings):
     DESCRIPTION: str = config("DESCRIPTION", default="")
     DEBUG: bool = config("DEBUG", cast=bool, default=False)
     ENVIRONMENT: str = config("ENVIRONMENT", default="local")
+    LOG_LEVEL: str = config("LOG_LEVEL", default="DEBUG")
 
     API_PREFIX: str = "/api"
     DOCS_URL: str = "/docs"

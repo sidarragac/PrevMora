@@ -1,23 +1,39 @@
+import enum
+import datetime
+from typing import Optional
+from sqlalchemy.dialects.mssql import DATETIME2
+
 from sqlalchemy import (
-    Column, Integer, String, Date, Boolean, ForeignKey, DECIMAL, TIMESTAMP
+    Integer, String, Date, Boolean, ForeignKey, Enum, text, BigInteger
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .base import Base
+    
+class PaymentChanelEnum(enum.Enum):
+    OFFICE = "Oficina"
+    CORRESPONDENT = "Corresponsal"
+    TRANSFER = "Transferencia"
+    BRANCH = "Sucursal"
 
 class Reconciliation(Base):
-    __tablename__ = "reconciliation"
+    __tablename__ = 'reconciliation'
 
-    id = Column(Integer, primary_key=True)
-    payment_channel_id = Column(Integer, ForeignKey("payment_channel.id"), nullable=False)
-    payment_reference = Column(Integer, ForeignKey("credit.payment_reference"), nullable=False)
-    payment_amount = Column(Integer, nullable=False)
-    transaction_date = Column(Date, nullable=False)
-    observation = Column(String(255), nullable=True)
-    created_at = Column(TIMESTAMP)
-    updated_at = Column(TIMESTAMP)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    payment_channel: Mapped[PaymentChanelEnum] = mapped_column(Enum(PaymentChanelEnum), nullable=False)
+    payment_reference: Mapped[BigInteger] = mapped_column(ForeignKey('credit.payment_reference'), nullable=False)
+    payment_amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    transaction_date: Mapped[datetime.date] = mapped_column(Date, nullable=False)
+    observation: Mapped[Optional[str]] = mapped_column(String)
+    
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DATETIME2, 
+        nullable=False, 
+        server_default=text('GETDATE()')
+    )
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DATETIME2, 
+        nullable=False, 
+        server_default=text('GETDATE()')
+    )
 
-    payment_channel = relationship("Payment_Channel", back_populates="reconciliations")
-    credit = relationship("Credit", back_populates="reconciliations", foreign_keys=[payment_reference])
-
-    def __repr__(self):
-        return f"<Reconciliation(id={self.id}, payment_amount={self.payment_amount}, transaction_date={self.transaction_date})>"
+    credit: Mapped['Credit'] = relationship('Credit', back_populates='reconciliation')

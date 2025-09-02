@@ -2,47 +2,29 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
+from ....config.logger import logger
 from ....models.base import Base
 from ....config.database import get_db_session, sessionmanager
 from ....models import (
     Alert,
-    Alert_Type,
-    Client_State,
     Client,
-    Contact_Method,
-    Contact_Result,
-    Credit_State,
     Credit,
-    Installment_State,
     Installment,
-    Manager_Zone,
     Manager,
-    Payment_Channel,
     Portfolio,
     Reconciliation
 )
 
 router = APIRouter()
 
-@router.post("/create-tables-safe")
-async def create_tables_safe():
-    """Crear tablas de forma segura, una por una"""
-    
-    # Orden correcto para evitar problemas de FK
+@router.post("/create-tables")
+async def create_tables():
     table_order = [
-        "alert_type",
-        "client_state", 
-        "contact_method",
-        "contact_result",
-        "credit_state",
-        "installment_state",
-        "manager_zone",
-        "payment_channel",
         "client",
         "manager",
-        "portfolio",
         "credit",
         "installment",
+        "portfolio",
         "alert",
         "reconciliation"
     ]
@@ -58,25 +40,23 @@ async def create_tables_safe():
                         await connection.run_sync(table.create, checkfirst=True)
                         created_tables.append(table_name)
                     except Exception as table_error:
-                        print(f"Error creando tabla {table_name}: {table_error}")
+                        logger.error(f"Error creando tabla {table_name}: {table_error}")
                         continue
             
             await connection.commit()
             
         return {
-            "message": "Proceso de creación completado",
+            "message": "Tables successfully created",
             "created_tables": created_tables,
             "total_created": len(created_tables)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error en proceso de creación: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error en la creación: {str(e)}")
 
 @router.get("/check-tables")
 async def check_existing_tables():
-    """Verificar qué tablas existen en la base de datos"""
     try:
         async with sessionmanager.session() as session:
-            # Para SQL Server
             result = await session.execute(text("""
                 SELECT TABLE_NAME 
                 FROM INFORMATION_SCHEMA.TABLES 
@@ -87,7 +67,6 @@ async def check_existing_tables():
             
             existing_tables = [row[0] for row in result.fetchall()]
             
-            # Comparar con modelos definidos
             defined_tables = list(Base.metadata.tables.keys())
             
             return {
@@ -99,53 +78,8 @@ async def check_existing_tables():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error verificando tablas: {str(e)}")
 
-@router.post("/drop-tables-safe")
-async def drop_tables_safe():
-    """Eliminar tablas en orden inverso para evitar problemas de FK"""
-    
-    table_order = [
-        "reconciliation",
-        "alert", 
-        "installment",
-        "credit",
-        "portfolio",
-        "manager",
-        "client",
-        "payment_channel",
-        "manager_zone",
-        "installment_state",
-        "credit_state",
-        "contact_result",
-        "contact_method",
-        "client_state",
-        "alert_type"
-    ]
-    
-    dropped_tables = []
-    
-    try:
-        async with sessionmanager.connect() as connection:
-            for table_name in table_order:
-                if table_name in Base.metadata.tables:
-                    try:
-                        await connection.execute(text(f"DROP TABLE IF EXISTS {table_name}"))
-                        dropped_tables.append(table_name)
-                    except Exception as table_error:
-                        print(f"Error eliminando tabla {table_name}: {table_error}")
-                        continue
-            
-            await connection.commit()
-            
-        return {
-            "message": "Tablas eliminadas exitosamente",
-            "dropped_tables": dropped_tables
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error eliminando tablas: {str(e)}")
-
 @router.get("/debug-foreign-keys")
 async def debug_foreign_keys():
-    """Debug de foreign keys para identificar problemas"""
     try:
         fk_info = []
         for table_name, table in Base.metadata.tables.items():
