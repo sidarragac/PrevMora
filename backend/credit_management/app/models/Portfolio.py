@@ -3,7 +3,7 @@ import datetime
 from typing import Optional
 from sqlalchemy.dialects.mssql import DATETIME2
 from sqlalchemy import (
-    Integer, String, Date, ForeignKey, DATETIME, Enum
+    Integer, String, Date, ForeignKey, Enum, text
 )
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .base import Base
@@ -31,8 +31,17 @@ class Portfolio(Base):
     management_date: Mapped[datetime.date] = mapped_column(Date, nullable=False)
     observation: Mapped[Optional[str]] = mapped_column(String)
     payment_promise_date: Mapped[Optional[datetime.date]] = mapped_column(Date)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DATETIME)
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DATETIME)
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DATETIME2, 
+        nullable=False, 
+        server_default=text('GETDATE()')
+    )
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DATETIME2, 
+        nullable=False, 
+        server_default=text('GETDATE()')
+    )
 
     installment: Mapped['Installment'] = relationship('Installment', back_populates='portfolio')
     manager: Mapped['Manager'] = relationship('Manager', back_populates='portfolio')

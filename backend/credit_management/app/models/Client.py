@@ -11,6 +11,7 @@ class ClientStateEnum(enum.Enum):
     ACTIVE = "Activo"
     PUNISHED = "Castigado"
     OVERDUE = "En Mora"
+    INACTIVE = "Inactivo"
 
 class Client(Base):
     __tablename__ = 'client'
