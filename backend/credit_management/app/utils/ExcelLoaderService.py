@@ -204,7 +204,6 @@ class ExcelLoaderService:
                 results["errors"].append(error_msg)
 
     async def _process_portfolio(self, df: pd.DataFrame, session: AsyncSession, results: Dict[str, Any]):
-        """Procesa la hoja de gestiones"""
         if df.empty:
             logger.warning("No se encontraron datos de gestiones")
             return
