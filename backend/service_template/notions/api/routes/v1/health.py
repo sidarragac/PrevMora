@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Request
-from app.controllers import HealthController
+from notions.controllers import HealthController
 
 
 router = APIRouter(tags=["health"])

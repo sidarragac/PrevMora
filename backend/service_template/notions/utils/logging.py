@@ -1,6 +1,6 @@
 import logging
 
-from app.config.settings import settings
+from notions.config.settings import settings
 
 
 def configure_logging() -> None:
