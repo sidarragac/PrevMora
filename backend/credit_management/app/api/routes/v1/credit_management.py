@@ -9,21 +9,9 @@ import uuid
 from ....utils.ExcelLoaderService import ExcelLoaderService
 from ....config.database import get_db_session
 
-from ....schemas.Client import ClientResponse
-from ....repository.base import BaseRepository
-from ....models.Client import Client
-
 router = APIRouter()
 
 loading_tasks = {}
-
-@router.get("/get_client_by_id/{client_id}", response_model=ClientResponse)
-async def get_client_by_id(client_id: int, session: AsyncSession = Depends(get_db_session)):
-    repository = BaseRepository(Client)
-    client = await repository.get_by_id(session, client_id)
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
-    return client
 
 @router.post("/upload-excel", response_model=Dict[str, Any])
 async def upload_excel(

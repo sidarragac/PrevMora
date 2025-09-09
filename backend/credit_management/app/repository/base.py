@@ -1,22 +1,35 @@
 from functools import reduce
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, Type, TypeVar, Optional
+from pydantic import BaseModel
 
 from sqlalchemy import Select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import select
 
 from ..models.base import Base
+from ..schemas.base import BaseSchema, BaseResponseSchema
 
 ModelType = TypeVar("ModelType", bound=Base)
+CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseSchema)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseSchema)
+GetSchemaType = TypeVar("GetSchemaType", bound=BaseResponseSchema)
 
-
-class BaseRepository(Generic[ModelType]):
-    def __init__(self, model: Type[ModelType]):
+class BaseRepository(Generic[ModelType, CreateSchemaType, GetSchemaType, UpdateSchemaType]):
+    def __init__(self, model: Type[ModelType], 
+                 create_schema: Type[CreateSchemaType] = None,
+                 get_schema: Type[GetSchemaType] = None,
+                 update_schema: Type[UpdateSchemaType] = None):
         self.model = model
+        self.create_schema = create_schema
+        self.get_schema = get_schema
+        self.update_schema = update_schema
 
-    async def get_by_id(self, db: AsyncSession, id: int) -> ModelType | None:
+    async def get_by_id(self, db: AsyncSession, id: int) -> GetSchemaType | None:
         result = await db.execute(select(self.model).where(self.model.id == id))
-        return result.scalar_one_or_none()
+        db_obj = result.scalar_one_or_none()
+        if db_obj:
+            return self.get_schema.model_validate(db_obj, from_attributes=True)
+        return None
 
     # async def get_multi(
     #     self,
