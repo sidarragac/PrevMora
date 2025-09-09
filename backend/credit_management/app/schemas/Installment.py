@@ -4,10 +4,10 @@ from typing import Optional, List
 from datetime import datetime, date
 from enum import Enum
 from decimal import Decimal
-from .base import BaseSchema, BaseResponseSchema
+from .base import BaseSchema, BaseResponseSchema, ListBase
 from ..models.Installment import InstallmentStateEnum
 
-class InstallmentCreate(BaseSchema):
+class InstallmentCreate(BaseModel):
     credit_id: int = Field(..., gt=0)
     installment_state: InstallmentStateEnum
     installment_number: int = Field(..., gt=0)
@@ -16,7 +16,7 @@ class InstallmentCreate(BaseSchema):
     payment_date: Optional[date] = Field(None)
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # This schema can be used for updating installments if needed in the future
 # Currently it does not make sense on the business logic
@@ -39,9 +39,5 @@ class InstallmentResponse(BaseResponseSchema):
     due_date: date
     payment_date: Optional[date] = None
 
-class InstallmentList(BaseModel):
+class InstallmentList(ListBase):
     items: List[InstallmentResponse]
-    total: int
-    page: int
-    page_size: int
-    pages: int

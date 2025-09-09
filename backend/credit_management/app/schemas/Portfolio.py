@@ -1,10 +1,10 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import date, datetime
-from .base import BaseSchema, BaseResponseSchema
+from .base import BaseSchema, BaseResponseSchema, ListBase
 from ..models.Portfolio import ContactResultEnum, ContactMethodEnum
 
-class PortfolioCreate(BaseSchema):
+class PortfolioCreate(BaseModel):
     installment_id: int = Field(..., gt=0)
     manager_id: int = Field(..., gt=0)
     contact_method: ContactMethodEnum
@@ -14,9 +14,9 @@ class PortfolioCreate(BaseSchema):
     payment_promise_date: Optional[date] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
-class PortfolioUpdate(BaseSchema):
+class PortfolioUpdate(BaseModel):
     contact_method: Optional[ContactMethodEnum] = None
     contact_result: Optional[ContactResultEnum] = None
     management_date: Optional[date] = None
@@ -24,7 +24,7 @@ class PortfolioUpdate(BaseSchema):
     payment_promise_date: Optional[date] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PortfolioResponse(BaseResponseSchema):
     installment_id: int
@@ -35,9 +35,5 @@ class PortfolioResponse(BaseResponseSchema):
     observation: Optional[str] = None
     payment_promise_date: Optional[date] = None
 
-class PortfolioList(BaseModel):
+class PortfolioList(ListBase):
     items: List[PortfolioResponse]
-    total: int
-    page: int
-    page_size: int
-    pages: int

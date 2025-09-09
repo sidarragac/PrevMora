@@ -1,10 +1,10 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime, date
-from .base import BaseSchema, BaseResponseSchema
+from .base import BaseSchema, BaseResponseSchema, ListBase
 from ..models.Reconciliation import PaymentChanelEnum
 
-class ReconciliationCreate(BaseSchema):
+class ReconciliationCreate(BaseModel):
     payment_channel: PaymentChanelEnum
     payment_reference: int = Field(..., gt=0)
     payment_amount: int = Field(..., gt=0)
@@ -12,7 +12,7 @@ class ReconciliationCreate(BaseSchema):
     observation: Optional[str] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # This does not make sense in the current model, domain logic, and requirements
 # class ReconciliationUpdate(BaseSchema):
@@ -31,9 +31,5 @@ class ReconciliationResponse(BaseResponseSchema):
     transaction_date: date
     observation: Optional[str] = None
 
-class ReconciliationList(BaseModel):
+class ReconciliationList(ListBase):
     items: List[ReconciliationResponse]
-    total: int
-    page: int
-    page_size: int
-    pages: int

@@ -8,13 +8,13 @@ from ..config.database import sessionmanager
 
 from ..models.Alert import AlertTypeEnum, Alert
 from ..models.Client import ClientStateEnum, Client
-from ..models.Credit import CreditStateEnum, Credit
+from ..models.Credit import CreditStateEnum, Credit, INTEREST_RATE_MULTIPLIER
 from ..models.Installment import InstallmentStateEnum, Installment
 from ..models.Manager import ManagerZoneEnum, Manager
 from ..models.Portfolio import ContactMethodEnum, ContactResultEnum, Portfolio
 from ..models.Reconciliation import PaymentChanelEnum, Reconciliation
 
-INTEREST_RATE_MULTIPLIER = 10000
+# INTEREST_RATE_MULTIPLIER = 10000
 
 class ExcelLoaderService:
     def __init__(self):

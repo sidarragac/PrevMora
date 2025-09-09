@@ -1,17 +1,17 @@
 from pydantic import Field, BaseModel
 from typing import Optional, List
 from datetime import datetime
-from .base import BaseResponseSchema, BaseSchema
+from .base import BaseResponseSchema, BaseSchema, ListBase
 from ..models.Alert import AlertTypeEnum
 
-class AlertCreate(BaseSchema):
+class AlertCreate(BaseModel):
     credit_id: int = Field(..., gt=0)
     alert_type: AlertTypeEnum
     manually_generated: bool
     alert_date: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # This does not make sense in the current model, domain logic, and requirements
 # class AlertUpdate(BaseSchema):
@@ -28,9 +28,5 @@ class AlertResponse(BaseResponseSchema):
     manually_generated: bool
     alert_date: datetime
 
-class AlertList(BaseModel):
+class AlertList(ListBase):
     items: List[AlertResponse]
-    total: int
-    page: int
-    page_size: int
-    pages: int

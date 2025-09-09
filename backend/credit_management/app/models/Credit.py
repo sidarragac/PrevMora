@@ -7,6 +7,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .base import Base
 
+INTEREST_RATE_MULTIPLIER = 10000
+
 class CreditStateEnum(enum.Enum):
     PENDING = "Pendiente"
     APPROVED = "Vigente"
