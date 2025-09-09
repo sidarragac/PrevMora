@@ -7,4 +7,4 @@ router = APIRouter()
 
 router.include_router(admin_router, prefix="/admin", tags=["Admin"])
 router.include_router(credit_management_router, prefix="/credit-management", tags=["Excel Credit Management"])
-router.include_router(v1_router, prefix="/v1")
+router.include_router(v1_router, prefix="")
