@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - run: pip install -r requirements.txt
+      - run: pip install pytest pytest-cov requests
       - run: pip install pytest pytest-cov
       - run: pytest -q --junitxml=pytest-report.xml --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v4
