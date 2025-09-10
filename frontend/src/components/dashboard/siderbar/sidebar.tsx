@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import { SignOutButton } from '@clerk/nextjs';
-import { HandCoins, Home, LogOut, Wallet } from 'lucide-react';
+import { File, HandCoins, Home, LogOut, Wallet } from 'lucide-react';
 
 import Header from '@/components/dashboard/siderbar/header';
 import NavBtn from '@/components/dashboard/siderbar/nav-btn';
@@ -65,6 +65,13 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             goto="/plataforma/cartera"
             iconActive={<Wallet className="size-6" />}
             iconInactive={<Wallet className="size-6" />}
+            restringed={false}
+          />
+          <NavBtn
+            text="Subir Excel"
+            goto="/plataforma/subir-excel"
+            iconActive={<File className="size-6" />}
+            iconInactive={<File className="size-6" />}
             restringed={false}
           />
 

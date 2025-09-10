@@ -1,0 +1,2744 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PrevMora-Template",
+    "description": "API Template with Service Layer Architecture",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/PrevMora-Template/v1/admin/create-tables": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Create Tables",
+        "operationId": "create_tables_api_PrevMora_Template_v1_admin_create_tables_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/admin/check-tables": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Check Existing Tables",
+        "operationId": "check_existing_tables_api_PrevMora_Template_v1_admin_check_tables_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/admin/debug-foreign-keys": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Debug Foreign Keys",
+        "operationId": "debug_foreign_keys_api_PrevMora_Template_v1_admin_debug_foreign_keys_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/credit-management/upload-excel": {
+      "post": {
+        "tags": ["Excel Credit Management"],
+        "summary": "Upload Excel",
+        "operationId": "upload_excel_api_PrevMora_Template_v1_credit_management_upload_excel_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_excel_api_PrevMora_Template_v1_credit_management_upload_excel_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Upload Excel Api Prevmora Template V1 Credit Management Upload Excel Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/clients/get_client_by_id/{client_id}": {
+      "get": {
+        "tags": ["Clients", "Clients"],
+        "summary": "Get Client By Id",
+        "operationId": "get_client_by_id_api_PrevMora_Template_v1_clients_get_client_by_id__client_id__get",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/clients/get_clients": {
+      "post": {
+        "tags": ["Clients", "Clients"],
+        "summary": "Get Clients",
+        "operationId": "get_clients_api_PrevMora_Template_v1_clients_get_clients_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/clients/create_client": {
+      "post": {
+        "tags": ["Clients", "Clients"],
+        "summary": "Create Client",
+        "operationId": "create_client_api_PrevMora_Template_v1_clients_create_client_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/clients/update_client/{client_id}": {
+      "patch": {
+        "tags": ["Clients", "Clients"],
+        "summary": "Update Client",
+        "operationId": "update_client_api_PrevMora_Template_v1_clients_update_client__client_id__patch",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/clients/get_client_complete_data/{client_id}": {
+      "get": {
+        "tags": ["Clients", "Clients"],
+        "summary": "Get Client Complete Data",
+        "operationId": "get_client_complete_data_api_PrevMora_Template_v1_clients_get_client_complete_data__client_id__get",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientCompleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/alerts/get_alert_by_id/{alert_id}": {
+      "get": {
+        "tags": ["Alerts", "Alerts"],
+        "summary": "Get Alert By Id",
+        "operationId": "get_alert_by_id_api_PrevMora_Template_v1_alerts_get_alert_by_id__alert_id__get",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/alerts/get_alerts": {
+      "post": {
+        "tags": ["Alerts", "Alerts"],
+        "summary": "Get Alerts",
+        "operationId": "get_alerts_api_PrevMora_Template_v1_alerts_get_alerts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/alerts/create_alert": {
+      "post": {
+        "tags": ["Alerts", "Alerts"],
+        "summary": "Create Alert",
+        "operationId": "create_alert_api_PrevMora_Template_v1_alerts_create_alert_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/credits/get_credit_by_id/{credit_id}": {
+      "get": {
+        "tags": ["Credits", "Credits"],
+        "summary": "Get Credit By Id",
+        "operationId": "get_credit_by_id_api_PrevMora_Template_v1_credits_get_credit_by_id__credit_id__get",
+        "parameters": [
+          {
+            "name": "credit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Credit Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/credits/get_credits": {
+      "post": {
+        "tags": ["Credits", "Credits"],
+        "summary": "Get Credits",
+        "operationId": "get_credits_api_PrevMora_Template_v1_credits_get_credits_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/credits/create_credit": {
+      "post": {
+        "tags": ["Credits", "Credits"],
+        "summary": "Create Credit",
+        "operationId": "create_credit_api_PrevMora_Template_v1_credits_create_credit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/managers/get_manager_by_id/{manager_id}": {
+      "get": {
+        "tags": ["Managers", "Managers"],
+        "summary": "Get Manager By Id",
+        "operationId": "get_manager_by_id_api_PrevMora_Template_v1_managers_get_manager_by_id__manager_id__get",
+        "parameters": [
+          {
+            "name": "manager_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Manager Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/managers/get_managers": {
+      "post": {
+        "tags": ["Managers", "Managers"],
+        "summary": "Get Managers",
+        "operationId": "get_managers_api_PrevMora_Template_v1_managers_get_managers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/managers/create_manager": {
+      "post": {
+        "tags": ["Managers", "Managers"],
+        "summary": "Create Manager",
+        "operationId": "create_manager_api_PrevMora_Template_v1_managers_create_manager_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/portfolios/get_portfolio_by_id/{portfolio_id}": {
+      "get": {
+        "tags": ["Portfolios", "Portfolios"],
+        "summary": "Get Portfolio By Id",
+        "operationId": "get_portfolio_by_id_api_PrevMora_Template_v1_portfolios_get_portfolio_by_id__portfolio_id__get",
+        "parameters": [
+          {
+            "name": "portfolio_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Portfolio Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/portfolios/get_portfolios": {
+      "post": {
+        "tags": ["Portfolios", "Portfolios"],
+        "summary": "Get Portfolios",
+        "operationId": "get_portfolios_api_PrevMora_Template_v1_portfolios_get_portfolios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/portfolios/create_portfolio": {
+      "post": {
+        "tags": ["Portfolios", "Portfolios"],
+        "summary": "Create Portfolio",
+        "operationId": "create_portfolio_api_PrevMora_Template_v1_portfolios_create_portfolio_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfolioCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/installments/get_installment_by_id/{installment_id}": {
+      "get": {
+        "tags": ["Installments", "Installments"],
+        "summary": "Get Installment By Id",
+        "operationId": "get_installment_by_id_api_PrevMora_Template_v1_installments_get_installment_by_id__installment_id__get",
+        "parameters": [
+          {
+            "name": "installment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Installment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/installments/get_installments": {
+      "post": {
+        "tags": ["Installments", "Installments"],
+        "summary": "Get Installments",
+        "operationId": "get_installments_api_PrevMora_Template_v1_installments_get_installments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallmentList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/installments/create_installment": {
+      "post": {
+        "tags": ["Installments", "Installments"],
+        "summary": "Create Installment",
+        "operationId": "create_installment_api_PrevMora_Template_v1_installments_create_installment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/reconciliations/get_reconciliation_by_id/{reconciliation_id}": {
+      "get": {
+        "tags": ["Reconciliations", "Reconciliations"],
+        "summary": "Get Reconciliation By Id",
+        "operationId": "get_reconciliation_by_id_api_PrevMora_Template_v1_reconciliations_get_reconciliation_by_id__reconciliation_id__get",
+        "parameters": [
+          {
+            "name": "reconciliation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Reconciliation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/reconciliations/get_reconciliations": {
+      "post": {
+        "tags": ["Reconciliations", "Reconciliations"],
+        "summary": "Get Reconciliations",
+        "operationId": "get_reconciliations_api_PrevMora_Template_v1_reconciliations_get_reconciliations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PrevMora-Template/v1/reconciliations/create_reconciliation": {
+      "post": {
+        "tags": ["Reconciliations", "Reconciliations"],
+        "summary": "Create Reconciliation",
+        "operationId": "create_reconciliation_api_PrevMora_Template_v1_reconciliations_create_reconciliation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlertCreate": {
+        "properties": {
+          "credit_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Credit Id"
+          },
+          "client_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Client Id"
+          },
+          "alert_type": {
+            "type": "string",
+            "title": "Alert Type"
+          },
+          "manually_generated": {
+            "type": "boolean",
+            "title": "Manually Generated"
+          },
+          "alert_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Alert Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credit_id",
+          "client_id",
+          "alert_type",
+          "manually_generated",
+          "alert_date"
+        ],
+        "title": "AlertCreate"
+      },
+      "AlertDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "credit_id": {
+            "type": "integer",
+            "title": "Credit Id"
+          },
+          "client_id": {
+            "type": "integer",
+            "title": "Client Id"
+          },
+          "alert_type": {
+            "type": "string",
+            "title": "Alert Type"
+          },
+          "manually_generated": {
+            "type": "boolean",
+            "title": "Manually Generated"
+          },
+          "alert_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Alert Date"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "credit_id",
+          "client_id",
+          "alert_type",
+          "manually_generated",
+          "alert_date"
+        ],
+        "title": "AlertDetailResponse"
+      },
+      "AlertList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AlertResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "AlertList"
+      },
+      "AlertResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "credit_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Credit Id"
+          },
+          "client_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Client Id"
+          },
+          "alert_type": {
+            "type": "string",
+            "title": "Alert Type"
+          },
+          "manually_generated": {
+            "type": "boolean",
+            "title": "Manually Generated"
+          },
+          "alert_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Alert Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credit_id",
+          "client_id",
+          "alert_type",
+          "manually_generated",
+          "alert_date"
+        ],
+        "title": "AlertResponse"
+      },
+      "Body_upload_excel_api_PrevMora_Template_v1_credit_management_upload_excel_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": ["file"],
+        "title": "Body_upload_excel_api_PrevMora_Template_v1_credit_management_upload_excel_post"
+      },
+      "ClientCompleteResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "document": {
+            "type": "string",
+            "title": "Document"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "credits": {
+            "items": {
+              "$ref": "#/components/schemas/CreditDetailResponse"
+            },
+            "type": "array",
+            "title": "Credits",
+            "default": []
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/AlertDetailResponse"
+            },
+            "type": "array",
+            "title": "Alerts",
+            "default": []
+          },
+          "reconciliations": {
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationDetailResponse"
+            },
+            "type": "array",
+            "title": "Reconciliations",
+            "default": []
+          },
+          "total_credits": {
+            "type": "integer",
+            "title": "Total Credits",
+            "default": 0
+          },
+          "total_installments": {
+            "type": "integer",
+            "title": "Total Installments",
+            "default": 0
+          },
+          "total_portfolio_managements": {
+            "type": "integer",
+            "title": "Total Portfolio Managements",
+            "default": 0
+          },
+          "total_alerts": {
+            "type": "integer",
+            "title": "Total Alerts",
+            "default": 0
+          },
+          "total_reconciliations": {
+            "type": "integer",
+            "title": "Total Reconciliations",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "document", "status"],
+        "title": "ClientCompleteResponse"
+      },
+      "ClientCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "document": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 5,
+            "pattern": "^[0-9]*",
+            "title": "Document"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 20,
+            "title": "Phone"
+          },
+          "address": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Address"
+          },
+          "zone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "Inactivo"
+          }
+        },
+        "type": "object",
+        "required": ["name", "document", "phone", "address"],
+        "title": "ClientCreate"
+      },
+      "ClientList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClientResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "ClientList"
+      },
+      "ClientResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "document": {
+            "type": "string",
+            "title": "Document"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": ["name", "document", "status"],
+        "title": "ClientResponse"
+      },
+      "ClientUpdate": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "zone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "title": "ClientUpdate"
+      },
+      "CreditCreate": {
+        "properties": {
+          "client_id": {
+            "type": "integer",
+            "title": "Client Id"
+          },
+          "disbursement_amount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Disbursement Amount"
+          },
+          "payment_reference": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Payment Reference"
+          },
+          "interest_rate": {
+            "type": "number",
+            "title": "Interest Rate"
+          },
+          "total_quotas": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Total Quotas"
+          },
+          "disbursement_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Disbursement Date"
+          },
+          "credit_state": {
+            "type": "string",
+            "title": "Credit State",
+            "default": "Pendiente"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_id",
+          "disbursement_amount",
+          "payment_reference",
+          "interest_rate",
+          "total_quotas",
+          "disbursement_date"
+        ],
+        "title": "CreditCreate"
+      },
+      "CreditDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "integer",
+            "title": "Client Id"
+          },
+          "disbursement_amount": {
+            "type": "integer",
+            "title": "Disbursement Amount"
+          },
+          "payment_reference": {
+            "type": "string",
+            "title": "Payment Reference"
+          },
+          "interest_rate": {
+            "type": "number",
+            "title": "Interest Rate"
+          },
+          "total_quotas": {
+            "type": "integer",
+            "title": "Total Quotas"
+          },
+          "disbursement_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Disbursement Date"
+          },
+          "credit_state": {
+            "type": "string",
+            "title": "Credit State"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "installments": {
+            "items": {
+              "$ref": "#/components/schemas/InstallmentDetailResponse"
+            },
+            "type": "array",
+            "title": "Installments",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "disbursement_amount",
+          "payment_reference",
+          "interest_rate",
+          "total_quotas",
+          "disbursement_date",
+          "credit_state"
+        ],
+        "title": "CreditDetailResponse"
+      },
+      "CreditList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CreditResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "CreditList"
+      },
+      "CreditResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "client_id": {
+            "type": "integer",
+            "title": "Client Id"
+          },
+          "disbursement_amount": {
+            "type": "integer",
+            "title": "Disbursement Amount"
+          },
+          "payment_reference": {
+            "type": "string",
+            "title": "Payment Reference"
+          },
+          "interest_rate": {
+            "type": "number",
+            "title": "Interest Rate"
+          },
+          "total_quotas": {
+            "type": "integer",
+            "title": "Total Quotas"
+          },
+          "disbursement_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Disbursement Date"
+          },
+          "credit_state": {
+            "type": "string",
+            "title": "Credit State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "disbursement_amount",
+          "payment_reference",
+          "interest_rate",
+          "total_quotas",
+          "disbursement_date",
+          "credit_state"
+        ],
+        "title": "CreditResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InstallmentCreate": {
+        "properties": {
+          "credit_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Credit Id"
+          },
+          "installment_state": {
+            "type": "string",
+            "title": "Installment State"
+          },
+          "installments_number": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Installments Number"
+          },
+          "installments_value": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Installments Value"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date"
+          },
+          "payment_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credit_id",
+          "installment_state",
+          "installments_number",
+          "installments_value",
+          "due_date"
+        ],
+        "title": "InstallmentCreate"
+      },
+      "InstallmentDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "credit_id": {
+            "type": "integer",
+            "title": "Credit Id"
+          },
+          "installment_state": {
+            "type": "string",
+            "title": "Installment State"
+          },
+          "installments_number": {
+            "type": "integer",
+            "title": "Installments Number"
+          },
+          "installments_value": {
+            "type": "string",
+            "title": "Installments Value"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date"
+          },
+          "payment_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Date"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "portfolio": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioDetailResponse"
+            },
+            "type": "array",
+            "title": "Portfolio",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "credit_id",
+          "installment_state",
+          "installments_number",
+          "installments_value",
+          "due_date"
+        ],
+        "title": "InstallmentDetailResponse"
+      },
+      "InstallmentList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InstallmentResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "InstallmentList"
+      },
+      "InstallmentResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "credit_id": {
+            "type": "integer",
+            "title": "Credit Id"
+          },
+          "installment_state": {
+            "type": "string",
+            "title": "Installment State"
+          },
+          "installments_number": {
+            "type": "integer",
+            "title": "Installments Number"
+          },
+          "installments_value": {
+            "type": "string",
+            "title": "Installments Value"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date"
+          },
+          "payment_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credit_id",
+          "installment_state",
+          "installments_number",
+          "installments_value",
+          "due_date"
+        ],
+        "title": "InstallmentResponse"
+      },
+      "ManagerCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "manager_zone": {
+            "type": "string",
+            "title": "Manager Zone"
+          }
+        },
+        "type": "object",
+        "required": ["name", "manager_zone"],
+        "title": "ManagerCreate"
+      },
+      "ManagerList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ManagerResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "ManagerList"
+      },
+      "ManagerResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "manager_zone": {
+            "type": "string",
+            "title": "Manager Zone"
+          }
+        },
+        "type": "object",
+        "required": ["name", "manager_zone"],
+        "title": "ManagerResponse"
+      },
+      "PaginationParams": {
+        "properties": {
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "default": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size",
+            "default": 10
+          }
+        },
+        "type": "object",
+        "title": "PaginationParams"
+      },
+      "PortfolioCreate": {
+        "properties": {
+          "installment_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Installment Id"
+          },
+          "manager_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Manager Id"
+          },
+          "contact_method": {
+            "type": "string",
+            "title": "Contact Method"
+          },
+          "contact_result": {
+            "type": "string",
+            "title": "Contact Result"
+          },
+          "management_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Management Date"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation"
+          },
+          "payment_promise_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Promise Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "installment_id",
+          "manager_id",
+          "contact_method",
+          "contact_result",
+          "management_date"
+        ],
+        "title": "PortfolioCreate"
+      },
+      "PortfolioDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "installment_id": {
+            "type": "integer",
+            "title": "Installment Id"
+          },
+          "manager_id": {
+            "type": "integer",
+            "title": "Manager Id"
+          },
+          "contact_method": {
+            "type": "string",
+            "title": "Contact Method"
+          },
+          "contact_result": {
+            "type": "string",
+            "title": "Contact Result"
+          },
+          "management_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Management Date"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation"
+          },
+          "payment_promise_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Promise Date"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "installment_id",
+          "manager_id",
+          "contact_method",
+          "contact_result",
+          "management_date"
+        ],
+        "title": "PortfolioDetailResponse"
+      },
+      "PortfolioList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "PortfolioList"
+      },
+      "PortfolioResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "installment_id": {
+            "type": "integer",
+            "title": "Installment Id"
+          },
+          "manager_id": {
+            "type": "integer",
+            "title": "Manager Id"
+          },
+          "contact_method": {
+            "type": "string",
+            "title": "Contact Method"
+          },
+          "contact_result": {
+            "type": "string",
+            "title": "Contact Result"
+          },
+          "management_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Management Date"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation"
+          },
+          "payment_promise_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Promise Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "installment_id",
+          "manager_id",
+          "contact_method",
+          "contact_result",
+          "management_date"
+        ],
+        "title": "PortfolioResponse"
+      },
+      "ReconciliationCreate": {
+        "properties": {
+          "payment_channel": {
+            "type": "string",
+            "title": "Payment Channel"
+          },
+          "payment_reference": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Payment Reference"
+          },
+          "payment_amount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Payment Amount"
+          },
+          "transaction_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Transaction Date"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "payment_channel",
+          "payment_reference",
+          "payment_amount",
+          "transaction_date"
+        ],
+        "title": "ReconciliationCreate"
+      },
+      "ReconciliationDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "transaction_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Transaction Date"
+          },
+          "payment_reference": {
+            "type": "string",
+            "title": "Payment Reference"
+          },
+          "payment_amount": {
+            "type": "integer",
+            "title": "Payment Amount"
+          },
+          "payment_channel": {
+            "type": "string",
+            "title": "Payment Channel"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "transaction_date",
+          "payment_reference",
+          "payment_amount",
+          "payment_channel"
+        ],
+        "title": "ReconciliationDetailResponse"
+      },
+      "ReconciliationList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["total", "page", "page_size", "pages", "items"],
+        "title": "ReconciliationList"
+      },
+      "ReconciliationResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "payment_channel": {
+            "type": "string",
+            "title": "Payment Channel"
+          },
+          "payment_reference": {
+            "type": "string",
+            "title": "Payment Reference"
+          },
+          "payment_amount": {
+            "type": "integer",
+            "title": "Payment Amount"
+          },
+          "transaction_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Transaction Date"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "payment_channel",
+          "payment_reference",
+          "payment_amount",
+          "transaction_date"
+        ],
+        "title": "ReconciliationResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
