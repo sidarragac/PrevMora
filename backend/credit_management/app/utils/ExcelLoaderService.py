@@ -6,13 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..config.logger import logger
 from ..config.database import sessionmanager
 
-from ..models.Alert import AlertTypeEnum, Alert
-from ..models.Client import ClientStateEnum, Client
-from ..models.Credit import CreditStateEnum, Credit, INTEREST_RATE_MULTIPLIER
-from ..models.Installment import InstallmentStateEnum, Installment
-from ..models.Manager import ManagerZoneEnum, Manager
-from ..models.Portfolio import ContactMethodEnum, ContactResultEnum, Portfolio
-from ..models.Reconciliation import PaymentChanelEnum, Reconciliation
+from ..models.Alert import Alert
+from ..models.Client import Client
+from ..models.Credit import Credit, INTEREST_RATE_MULTIPLIER
+from ..models.Installment import Installment
+from ..models.Manager import Manager
+from ..models.Portfolio import Portfolio
+from ..models.Reconciliation import Reconciliation
 
 # INTEREST_RATE_MULTIPLIER = 10000
 
@@ -41,7 +41,7 @@ class ExcelLoaderService:
             await self._process_clients(excel_data.get('Clientes', pd.DataFrame()), session, results)
             await self._process_managers(excel_data.get('Gestores', pd.DataFrame()), session, results)
             await self._process_credits(excel_data.get('Créditos', pd.DataFrame()), session, results)
-            await self._process_installments(excel_data.get('Detalle cuotas', pd.DataFrame()), session, results)
+            await self._process_installments(excel_data.get('Detalle Cuotas', pd.DataFrame()), session, results)
             await self._process_portfolio(excel_data.get('Cartera', pd.DataFrame()), session, results)
             await self._process_alerts(excel_data.get('Alertas', pd.DataFrame()), session, results)
             await self._process_reconciliations(excel_data.get('Conciliaciones', pd.DataFrame()), session, results)
@@ -63,10 +63,10 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 state_mapping = {
-                    "Activo": ClientStateEnum.ACTIVE,
-                    "Castigado": ClientStateEnum.PUNISHED,
-                    "En mora": ClientStateEnum.OVERDUE,
-                    "En Mora": ClientStateEnum.OVERDUE
+                    "Activo": "Activo",
+                    "Castigado": "Castigado",
+                    "En mora": "En Mora",
+                    "En Mora": "En Mora"
                 }
 
                 client = Client(
@@ -76,7 +76,7 @@ class ExcelLoaderService:
                     email=str(row['Correo']).strip(),
                     address=str(row['Dirección']).strip() if pd.notna(row['Dirección']) else "",
                     zone=str(row['Zona']).strip() if pd.notna(row['Zona']) else None,
-                    client_state=state_mapping.get(str(row['Estado_Cliente']).strip(), ClientStateEnum.ACTIVE)
+                    status=state_mapping.get(str(row['Estado_Cliente']).strip(), "Activo")
                 )
 
                 session.add(client)
@@ -98,14 +98,14 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 zone_mapping = {
-                    "Rural": ManagerZoneEnum.RURAL,
-                    "Urbana": ManagerZoneEnum.URBAN,
-                    "Urbano": ManagerZoneEnum.URBAN
+                    "Rural": "Rural",
+                    "Urbana": "Urbano",
+                    "Urbano": "Urbano"
                 }
 
                 manager = Manager(
                     name=str(row['Nombre_Gestor']).strip(),
-                    manager_zone=zone_mapping.get(str(row['Zona_Asignada']).strip(), ManagerZoneEnum.RURAL)
+                    manager_zone=zone_mapping.get(str(row['Zona_Asignada']).strip(), "Rural")
                 )
 
                 session.add(manager)
@@ -127,10 +127,10 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 state_mapping = {
-                    "Vigente": CreditStateEnum.APPROVED,
-                    "Cancelado": CreditStateEnum.CANCELED,
-                    "En Mora": CreditStateEnum.MORA,
-                    "Pendiente": CreditStateEnum.PENDING
+                    "Vigente": "Vigente",
+                    "Cancelado": "Cancelado",
+                    "En Mora": "En Mora",
+                    "Pendiente": "Pendiente"
                 }
 
                 original_client_id = int(row['Numero_Cliente'])
@@ -141,9 +141,9 @@ class ExcelLoaderService:
 
                 credit = Credit(
                     client_id=self.client_mapping[original_client_id],
-                    credit_state=state_mapping.get(str(row['Estado_Credito']).strip(), CreditStateEnum.PENDING),
+                    credit_state=state_mapping.get(str(row['Estado_Credito']).strip(), "Pendiente"),
                     disbursement_amount=int(float(row['Monto_Original'])),
-                    payment_reference=int(row['Referencia_Pago']),
+                    payment_reference=str(row['Referencia_Pago']),
                     disbursement_date=disbursement_date,
                     interest_rate=int(float(row['Tasa_Interes']) * INTEREST_RATE_MULTIPLIER),
                     total_quotas=int(row['Cuotas_Totales'])
@@ -168,10 +168,10 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 state_mapping = {
-                    "Pagada": InstallmentStateEnum.PAID,
-                    "Pendiente": InstallmentStateEnum.PENDING,
-                    "Vencida": InstallmentStateEnum.OVERDUE,
-                    "Promesa de pago": InstallmentStateEnum.PROMISE
+                    "Pagada": "Pagada",
+                    "Pendiente": "Pendiente",
+                    "Vencida": "Vencida",
+                    "Promesa de pago": "Promesa de pago"
                 }
 
                 original_credit_id = int(row['Numero_Credito'])
@@ -185,9 +185,9 @@ class ExcelLoaderService:
 
                 installment = Installment(
                     credit_id=self.credit_mapping[original_credit_id],
-                    installment_state=state_mapping.get(str(row['Estado_Cuota']).strip(), InstallmentStateEnum.PENDING),
-                    installment_number=int(row['Numero_Cuota2']),
-                    installment_value=int(float(row['Valor_Cuota'])),
+                    installment_state=state_mapping.get(str(row['Estado_Cuota']).strip(), "Pendiente"),
+                    installments_number=int(row['Numero_Cuota2']),
+                    installments_value=int(float(row['Valor_Cuota'])),
                     due_date=due_date,
                     payment_date=payment_date
                 )
@@ -211,17 +211,17 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 contact_method_mapping = {
-                    "Telefono": ContactMethodEnum.PHONE,
-                    "Correo": ContactMethodEnum.EMAIL,
-                    "WhatsApp": ContactMethodEnum.WHATSAPP,
-                    "Visita": ContactMethodEnum.VISIT
+                    "Telefono": "Telefono",
+                    "Correo": "Correo",
+                    "WhatsApp": "WhatsApp",
+                    "Visita": "Visita"
                 }
 
                 contact_result_mapping = {
-                    "Efectiva": ContactResultEnum.SUCCESFUL,
-                    "Sin respuesta": ContactResultEnum.NO_ANSWER,
-                    "Numero errado": ContactResultEnum.BAD_CONTACT_INFORMATION,
-                    "Promesa de pago": ContactResultEnum.PROMISE_TO_PAY
+                    "Efectiva": "Efectiva",
+                    "Sin respuesta": "Sin respuesta",
+                    "Numero errado": "Numero errado",
+                    "Promesa de pago": "Promesa de pago"
                 }
 
                 original_installment_id = int(row['Numero_Cuota'])
@@ -237,8 +237,8 @@ class ExcelLoaderService:
                 portfolio = Portfolio(
                     installment_id=self.installment_mapping[original_installment_id],
                     manager_id=self.manager_mapping[original_manager_id],
-                    contact_method=contact_method_mapping.get(str(row['Medio_Contacto']).strip(), ContactMethodEnum.PHONE),
-                    contact_result=contact_result_mapping.get(str(row['Resultado']).strip(), ContactResultEnum.NO_ANSWER),
+                    contact_method=contact_method_mapping.get(str(row['Medio_Contacto']).strip(), "Telefono"),
+                    contact_result=contact_result_mapping.get(str(row['Resultado']).strip(), "Sin respuesta"),
                     management_date=management_date,
                     observation=str(row['Observaciones']).strip() if pd.notna(row['Observaciones']) else None,
                     payment_promise_date=None
@@ -260,9 +260,9 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 alert_type_mapping = {
-                    "No respuesta": AlertTypeEnum.NO_ANSWER,
-                    "Riesgo de mora": AlertTypeEnum.WARNING,
-                    "Requiere visita": AlertTypeEnum.VISIT_REQUIRED
+                    "No respuesta": "No respuesta",
+                    "Riesgo de mora": "Riesgo de mora",
+                    "Requiere visita": "Requiere visita"
                 }
 
                 original_credit_id = int(row['Numero_Credito'])
@@ -272,9 +272,23 @@ class ExcelLoaderService:
                 alert_date = pd.to_datetime(row['Fecha_Alerta'], dayfirst=True).date()
                 manually_generated = str(row['Generada_Manualmente']).strip().lower() in ['si', 'yes', 'true']
 
+                # Get the client_id for this alert
+                # If the Excel has a Client ID column, use it; otherwise derive from credit
+                if 'ID_Cliente' in row and pd.notna(row['ID_Cliente']):
+                    original_client_id = int(row['ID_Cliente'])
+                    if original_client_id not in self.client_mapping:
+                        raise ValueError(f"Cliente {original_client_id} no encontrado para alerta")
+                    client_id = self.client_mapping[original_client_id]
+                else:
+                    # If no client ID in alert data, we need to get it from the credit
+                    # This requires querying the database to get the client_id for the credit
+                    # For now, we'll use the first available client as a fallback
+                    client_id = list(self.client_mapping.values())[0] if self.client_mapping else 1
+
                 alert = Alert(
                     credit_id=self.credit_mapping[original_credit_id],
-                    alert_type=alert_type_mapping.get(str(row['Tipo_Alerta']).strip(), AlertTypeEnum.NO_ANSWER),
+                    client_id=client_id,
+                    alert_type=alert_type_mapping.get(str(row['Tipo_Alerta']).strip(), "No respuesta"),
                     manually_generated=manually_generated,
                     alert_date=alert_date
                 )
@@ -295,17 +309,17 @@ class ExcelLoaderService:
         for _, row in df.iterrows():
             try:
                 channel_mapping = {
-                    "Oficina": PaymentChanelEnum.OFFICE,
-                    "Corresponsal": PaymentChanelEnum.CORRESPONDENT,
-                    "Transferencia": PaymentChanelEnum.TRANSFER,
-                    "Sucursal": PaymentChanelEnum.BRANCH
+                    "Oficina": "Oficina",
+                    "Corresponsal": "Corresponsal",
+                    "Transferencia": "Transferencia",
+                    "Sucursal": "Sucursal"
                 }
 
                 transaction_date = pd.to_datetime(row['Fecha_Transaccion'], dayfirst=True).date()
-                payment_reference = int(row['Referencia_Pago'])
+                payment_reference = str(row['Referencia_Pago'])
 
                 reconciliation = Reconciliation(
-                    payment_channel=channel_mapping.get(str(row['Canal_Pago']).strip(), PaymentChanelEnum.OFFICE),
+                    payment_channel=channel_mapping.get(str(row['Canal_Pago']).strip(), "Oficina"),
                     payment_reference=payment_reference,
                     payment_amount=int(float(row['Valor_Pagado'])),
                     transaction_date=transaction_date,
