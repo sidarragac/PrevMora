@@ -1,13 +1,14 @@
-from pydantic_settings import BaseSettings
-from decouple import Config, RepositoryEnv
-
 import logging
 import pathlib
+
+from decouple import Config, RepositoryEnv
+from pydantic_settings import BaseSettings
 
 ROOT_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent.parent.resolve()
 ENV_PATH: pathlib.Path = ROOT_DIR / ".env"
 
 config = Config(RepositoryEnv(str(ENV_PATH)))
+
 
 class BackendBaseSettings(BaseSettings):
     APP_NAME: str = config("APP_NAME", default="PrevMora-Template")
@@ -53,5 +54,6 @@ class BackendBaseSettings(BaseSettings):
             "openapi_url": self.OPENAPI_URL if self.DEBUG else None,
             "redoc_url": self.REDOC_URL if self.DEBUG else None,
         }
+
 
 settings = BackendBaseSettings()

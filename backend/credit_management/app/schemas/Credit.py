@@ -1,8 +1,11 @@
+from datetime import date, datetime
+from typing import List, Optional
+
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Optional, List
-from datetime import datetime, date
-from .base import BaseSchema, BaseResponseSchema, ListBase
+
 from ..models.Credit import INTEREST_RATE_MULTIPLIER
+from .base import BaseResponseSchema, BaseSchema, ListBase
+
 
 class CreditCreate(BaseModel):
     client_id: int
@@ -12,15 +15,18 @@ class CreditCreate(BaseModel):
     total_quotas: int = Field(..., gt=0)
     disbursement_date: date
     credit_state: str = "Pendiente"
-    
+
     class Config:
         from_attributes = True
 
     @classmethod
     def convert_rates_to_db(cls, data):
-        if isinstance(data, dict) and 'interest_rate' in data:
-            data['interest_rate'] = int(data['interest_rate'] * INTEREST_RATE_MULTIPLIER)
+        if isinstance(data, dict) and "interest_rate" in data:
+            data["interest_rate"] = int(
+                data["interest_rate"] * INTEREST_RATE_MULTIPLIER
+            )
         return data
+
 
 class CreditUpdate(BaseModel):
     disbursement_amount: Optional[int] = Field(None, gt=0)
@@ -30,6 +36,7 @@ class CreditUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class CreditResponse(BaseResponseSchema):
     id: int
@@ -41,12 +48,13 @@ class CreditResponse(BaseResponseSchema):
     disbursement_date: date
     credit_state: str
 
-    @field_validator('interest_rate', mode='before')
+    @field_validator("interest_rate", mode="before")
     @classmethod
     def convert_interest_rate(cls, v):
         if isinstance(v, int):
             return v / INTEREST_RATE_MULTIPLIER
         return v
+
 
 class CreditList(ListBase):
     items: List[CreditResponse]

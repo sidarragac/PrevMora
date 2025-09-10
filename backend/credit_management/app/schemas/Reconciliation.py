@@ -1,7 +1,10 @@
+from datetime import date, datetime
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
-from typing import Optional, List
-from datetime import datetime, date
-from .base import BaseSchema, BaseResponseSchema, ListBase
+
+from .base import BaseResponseSchema, BaseSchema, ListBase
+
 
 class ReconciliationCreate(BaseModel):
     payment_channel: str
@@ -9,9 +12,10 @@ class ReconciliationCreate(BaseModel):
     payment_amount: int = Field(..., gt=0)
     transaction_date: date
     observation: Optional[str] = None
-    
+
     class Config:
         from_attributes = True
+
 
 # This does not make sense in the current model, domain logic, and requirements
 # class ReconciliationUpdate(BaseSchema):
@@ -19,9 +23,10 @@ class ReconciliationCreate(BaseModel):
 #     payment_amount: Optional[int] = Field(None, gt=0)
 #     transaction_date: Optional[date] = None
 #     observation: Optional[str] = None
-    
+
 #     class Config:
 #         orm_mode = True
+
 
 class ReconciliationResponse(BaseResponseSchema):
     payment_channel: str
@@ -29,6 +34,7 @@ class ReconciliationResponse(BaseResponseSchema):
     payment_amount: int
     transaction_date: date
     observation: Optional[str] = None
+
 
 class ReconciliationList(ListBase):
     items: List[ReconciliationResponse]

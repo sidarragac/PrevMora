@@ -1,9 +1,11 @@
-from datetime import date
-from pydantic import BaseModel, Field
-from typing import Optional, List
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
-from .base import BaseSchema, BaseResponseSchema, ListBase
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
+
+from .base import BaseResponseSchema, BaseSchema, ListBase
+
 
 class InstallmentCreate(BaseModel):
     credit_id: int = Field(..., gt=0)
@@ -12,9 +14,10 @@ class InstallmentCreate(BaseModel):
     installments_value: Decimal = Field(..., gt=0)
     due_date: date
     payment_date: Optional[date] = Field(None)
-    
+
     class Config:
         from_attributes = True
+
 
 # This schema can be used for updating installments if needed in the future
 # Currently it does not make sense on the business logic
@@ -25,9 +28,10 @@ class InstallmentCreate(BaseModel):
 #     payment_date: Optional[date] = None
 #     payment_amount: Optional[Decimal] = Field(None, gt=0)
 #     payment_channel: Optional[PaymentChannel] = None
-    
+
 #     class Config:
 #         orm_mode = True
+
 
 class InstallmentResponse(BaseResponseSchema):
     credit_id: int
@@ -36,6 +40,7 @@ class InstallmentResponse(BaseResponseSchema):
     installments_value: Decimal
     due_date: date
     payment_date: Optional[date] = None
+
 
 class InstallmentList(ListBase):
     items: List[InstallmentResponse]

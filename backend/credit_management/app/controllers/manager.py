@@ -1,11 +1,11 @@
-from .base import BaseController
 from ..models.Manager import Manager
-from ..schemas.Manager import ManagerResponse, ManagerCreate, ManagerUpdate, ManagerList
+from ..schemas.Manager import ManagerCreate, ManagerList, ManagerResponse, ManagerUpdate
+from .base import BaseController
 
 
 class ManagerController(BaseController):
     """Controller for Manager operations."""
-    
+
     def __init__(self):
         super().__init__(
             model=Manager,
@@ -13,6 +13,5 @@ class ManagerController(BaseController):
             create_schema=ManagerCreate,
             update_schema=ManagerUpdate,
             list_schema=ManagerList,
-            not_found_message="Manager not found"
+            not_found_message="Manager not found",
         )
-

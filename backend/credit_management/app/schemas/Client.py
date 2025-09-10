@@ -1,13 +1,16 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
-from typing import Optional, List
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
-from .base import BaseSchema, BaseResponseSchema, ListBase
+from typing import List, Optional
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
+
 from ..models.Credit import INTEREST_RATE_MULTIPLIER
+from .base import BaseResponseSchema, BaseSchema, ListBase
+
 
 class ClientCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    document: str = Field(..., min_length=5, max_length=20, pattern=r'^[0-9]*')
+    document: str = Field(..., min_length=5, max_length=20, pattern=r"^[0-9]*")
     email: Optional[EmailStr] = None
     phone: str = Field(..., max_length=20)
     address: str = Field(..., max_length=255)
@@ -17,15 +20,17 @@ class ClientCreate(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ClientUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = Field(None, max_length=20)
     address: Optional[str] = Field(None, max_length=255)
     zone: Optional[str] = Field(None, max_length=100)
     status: Optional[str] = None
-    
+
     class Config:
         from_attributes = True
+
 
 class ClientResponse(BaseResponseSchema):
     name: str
@@ -36,8 +41,10 @@ class ClientResponse(BaseResponseSchema):
     zone: Optional[str] = None
     status: str
 
+
 class ClientList(ListBase):
     items: List[ClientResponse]
+
 
 # Schemas para el endpoint completo del cliente
 class PortfolioDetailResponse(BaseModel):
@@ -55,6 +62,7 @@ class PortfolioDetailResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class InstallmentDetailResponse(BaseModel):
     id: int
     credit_id: int
@@ -71,6 +79,7 @@ class InstallmentDetailResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class CreditDetailResponse(BaseModel):
     id: int
     client_id: int
@@ -85,7 +94,7 @@ class CreditDetailResponse(BaseModel):
     # Cuotas asociadas a este crédito
     installments: List[InstallmentDetailResponse] = []
 
-    @field_validator('interest_rate', mode='before')
+    @field_validator("interest_rate", mode="before")
     @classmethod
     def convert_interest_rate(cls, v):
         if isinstance(v, int):
@@ -94,6 +103,7 @@ class CreditDetailResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class AlertDetailResponse(BaseModel):
     id: int
@@ -108,6 +118,7 @@ class AlertDetailResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ReconciliationDetailResponse(BaseModel):
     id: int
     transaction_date: date
@@ -121,6 +132,7 @@ class ReconciliationDetailResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ClientCompleteResponse(BaseModel):
     # Datos básicos del cliente
     id: int
@@ -133,12 +145,12 @@ class ClientCompleteResponse(BaseModel):
     status: str
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    
+
     # Datos relacionados
     credits: List[CreditDetailResponse] = []
     alerts: List[AlertDetailResponse] = []
     reconciliations: List[ReconciliationDetailResponse] = []
-    
+
     # Estadísticas resumen
     total_credits: int = 0
     total_installments: int = 0

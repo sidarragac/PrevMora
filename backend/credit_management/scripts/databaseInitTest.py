@@ -1,25 +1,24 @@
-import sys
 import os
+import sys
 
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 
 from ..app.models import (
-    base,
     Alert,
     Client,
     Credit,
     Installment,
     Manager,
     Portfolio,
-    Reconciliation
+    Reconciliation,
+    base,
 )
-
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(script_dir, "../..")))
 
-db_path = os.path.join(script_dir, 'database.db')
+db_path = os.path.join(script_dir, "database.db")
 db_url = f"sqlite:///{db_path}"
 
 engine = create_engine(db_url)
