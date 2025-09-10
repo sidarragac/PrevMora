@@ -1,14 +1,14 @@
 from pydantic import Field, BaseModel
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 from .base import BaseResponseSchema, BaseSchema, ListBase
-from ..models.Alert import AlertTypeEnum
 
 class AlertCreate(BaseModel):
     credit_id: int = Field(..., gt=0)
-    alert_type: AlertTypeEnum
+    client_id: int = Field(..., gt=0)
+    alert_type: str
     manually_generated: bool
-    alert_date: datetime
+    alert_date: date
 
     class Config:
         from_attributes = True
@@ -24,9 +24,10 @@ class AlertCreate(BaseModel):
 
 class AlertResponse(BaseResponseSchema):
     credit_id: int = Field(..., gt=0)
-    alert_type: AlertTypeEnum
+    client_id: int = Field(..., gt=0)
+    alert_type: str
     manually_generated: bool
-    alert_date: datetime
+    alert_date: date
 
 class AlertList(ListBase):
     items: List[AlertResponse]

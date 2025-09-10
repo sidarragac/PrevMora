@@ -2,16 +2,14 @@ from datetime import date
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime, date
-from enum import Enum
 from decimal import Decimal
 from .base import BaseSchema, BaseResponseSchema, ListBase
-from ..models.Installment import InstallmentStateEnum
 
 class InstallmentCreate(BaseModel):
     credit_id: int = Field(..., gt=0)
-    installment_state: InstallmentStateEnum
-    installment_number: int = Field(..., gt=0)
-    installment_value: int = Field(..., gt=0)
+    installment_state: str
+    installments_number: int = Field(..., gt=0)
+    installments_value: Decimal = Field(..., gt=0)
     due_date: date
     payment_date: Optional[date] = Field(None)
     
@@ -33,9 +31,9 @@ class InstallmentCreate(BaseModel):
 
 class InstallmentResponse(BaseResponseSchema):
     credit_id: int
-    installment_state: InstallmentStateEnum
-    installment_number: int
-    installment_value: int
+    installment_state: str
+    installments_number: int
+    installments_value: Decimal
     due_date: date
     payment_date: Optional[date] = None
 
