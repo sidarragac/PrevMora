@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ....config.database import get_db_session
 from ....schemas.base import PaginationParams
 from ....controllers.client import ClientController
-from ....schemas.Client import ClientResponse, ClientCreate, ClientUpdate, ClientList
+from ....schemas.Client import ClientResponse, ClientCreate, ClientUpdate, ClientList, ClientCompleteResponse
 
 router = APIRouter()
 
@@ -27,4 +27,9 @@ async def create_client(client: ClientCreate, session: AsyncSession = Depends(ge
 async def update_client(client_id: int, client_update: ClientUpdate, session: AsyncSession = Depends(get_db_session)):
     controller = ClientController()
     return await controller.update(session, client_id, client_update)
+
+@router.get("/get_client_complete_data/{client_id}", response_model=ClientCompleteResponse, tags=["Clients"])
+async def get_client_complete_data(client_id: int, session: AsyncSession = Depends(get_db_session)):
+    controller = ClientController()
+    return await controller.get_client_complete_data(session, client_id)
 
