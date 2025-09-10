@@ -6,6 +6,7 @@ Bienvenido a la documentación técnica del proyecto PrevMora. Esta wiki contien
 
 ### 🎯 Estándares y Convenciones
 - **[Estándares de Nombramiento](naming-standards.md)** - Convenciones de nomenclatura para código, archivos y base de datos
+- **[Análisis Estático de Código](static-analysis.md)** - Herramientas de calidad, seguridad y formateo automático
 - **[Configuración de Desarrollo](development-setup.md)** - Herramientas, configuración del entorno y flujo de trabajo
 
 ### 🏗️ Arquitectura (Próximamente)

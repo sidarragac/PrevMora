@@ -89,6 +89,7 @@ npm run dev
 
 ### 📚 Wiki del Proyecto
 - **[Estándares de Nombramiento](docs/wiki/naming-standards.md)** - Convenciones de código y nomenclatura
+- **[Análisis Estático de Código](docs/wiki/static-analysis.md)** - Herramientas de calidad y seguridad
 - **[Configuración de Desarrollo](docs/wiki/development-setup.md)** - Herramientas y flujo de trabajo
 
 ### 🔧 Estándares de Desarrollo

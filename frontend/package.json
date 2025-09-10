@@ -7,7 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier src/ --write"
+    "lint:fix": "next lint --fix",
+    "lint:strict": "eslint src/ --max-warnings 0",
+    "format": "prettier src/ --write",
+    "format:check": "prettier src/ --check",
+    "type-check": "tsc --noEmit",
+    "analyze": "npm run lint:strict && npm run type-check && npm run format:check",
+    "test": "echo \"Tests will be configured here\"",
+    "audit:security": "npm audit --audit-level high",
+    "check-deps": "npm outdated"
   },
   "dependencies": {
     "next": "15.2.4",
@@ -29,6 +37,15 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-security": "^2.1.0",
+    "eslint-plugin-sonarjs": "^0.23.0",
+    "typescript-eslint": "^6.21.0"
   }
 }

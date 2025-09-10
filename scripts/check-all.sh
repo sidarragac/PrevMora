@@ -36,23 +36,84 @@ if [[ -d "backend/credit_management" ]]; then
     
     if [[ $BACKEND_ERRORS -eq 0 ]]; then
         # Verificar instalación de herramientas
-        echo "📥 Verificando herramientas de linting..."
-        pip install pylint mypy pytest --quiet
+        echo "📥 Verificando herramientas de análisis estático..."
+        pip install pylint mypy pytest black isort flake8 bandit pydocstyle vulture safety --quiet
         
-        echo "🔍 Ejecutando PyLint..."
-        if pylint app/ --score=no; then
-            echo "✅ PyLint: Sin errores de estilo"
+        echo "🎨 Verificando formato con Black..."
+        if black --check app/ scripts/ --quiet; then
+            echo "✅ Black: Código correctamente formateado"
         else
-            echo "❌ PyLint: Errores encontrados"
+            echo "❌ Black: Código necesita formateo"
             BACKEND_ERRORS=1
         fi
         
         echo ""
-        echo "🔍 Ejecutando MyPy (verificación de tipos)..."
+        echo "📑 Verificando imports con isort..."
+        if isort --check-only app/ scripts/ --quiet; then
+            echo "✅ isort: Imports correctamente organizados"
+        else
+            echo "❌ isort: Imports necesitan reorganización"
+            BACKEND_ERRORS=1
+        fi
+        
+        echo ""
+        echo "🔍 Ejecutando Flake8..."
+        if flake8 app/ scripts/; then
+            echo "✅ Flake8: Sin errores de estilo"
+        else
+            echo "❌ Flake8: Errores de estilo encontrados"
+            BACKEND_ERRORS=1
+        fi
+        
+        echo ""
+        echo "🔍 Ejecutando PyLint..."
+        if pylint app/ scripts/ --fail-under=8.0; then
+            echo "✅ PyLint: Calidad de código satisfactoria (≥8.0)"
+        else
+            echo "❌ PyLint: Calidad de código insuficiente (<8.0)"
+            BACKEND_ERRORS=1
+        fi
+        
+        echo ""
+        echo "🏷️ Verificando tipos con MyPy..."
         if mypy app/ --no-error-summary; then
             echo "✅ MyPy: Sin errores de tipos"
         else
             echo "❌ MyPy: Errores de tipos encontrados"
+            BACKEND_ERRORS=1
+        fi
+        
+        echo ""
+        echo "🔒 Escaneando seguridad con Bandit..."
+        if bandit -r app/ -q; then
+            echo "✅ Bandit: Sin vulnerabilidades de seguridad"
+        else
+            echo "❌ Bandit: Vulnerabilidades de seguridad encontradas"
+            BACKEND_ERRORS=1
+        fi
+        
+        echo ""
+        echo "📚 Verificando docstrings con pydocstyle..."
+        if pydocstyle app/ --convention=google; then
+            echo "✅ pydocstyle: Docstrings bien formateados"
+        else
+            echo "⚠️ pydocstyle: Algunos docstrings necesitan mejoras (no crítico)"
+        fi
+        
+        echo ""
+        echo "🧟 Buscando código muerto con Vulture..."
+        if vulture app/ --min-confidence 60; then
+            echo "✅ Vulture: Sin código muerto detectado"
+        else
+            echo "⚠️ Vulture: Posible código muerto encontrado (revisar manualmente)"
+        fi
+        
+        echo ""
+        echo "🛡️ Verificando dependencias con Safety..."
+        if safety check -r requirements.txt; then
+            echo "✅ Safety: Sin vulnerabilidades en dependencias"
+        else
+            echo "❌ Safety: Vulnerabilidades en dependencias encontradas"
             BACKEND_ERRORS=1
         fi
         
@@ -86,21 +147,56 @@ if [[ -d "frontend" ]]; then
         npm install --silent
     fi
     
-    echo "🔍 Ejecutando ESLint..."
-    if npm run lint --silent; then
-        echo "✅ ESLint: Sin errores de estilo"
+    echo "🎨 Verificando formato con Prettier..."
+    if npm run format:check --silent; then
+        echo "✅ Prettier: Código correctamente formateado"
     else
-        echo "❌ ESLint: Errores encontrados"
+        echo "❌ Prettier: Código necesita formateo"
         FRONTEND_ERRORS=1
     fi
     
     echo ""
-    echo "🔍 Ejecutando TypeScript compiler..."
-    if npx tsc --noEmit --pretty; then
+    echo "🔍 Ejecutando ESLint (modo estricto)..."
+    if npm run lint:strict --silent; then
+        echo "✅ ESLint: Sin errores de estilo (0 warnings)"
+    else
+        echo "❌ ESLint: Errores o warnings encontrados"
+        FRONTEND_ERRORS=1
+    fi
+    
+    echo ""
+    echo "🏷️ Verificando tipos con TypeScript..."
+    if npm run type-check --silent; then
         echo "✅ TypeScript: Sin errores de tipos"
     else
         echo "❌ TypeScript: Errores de tipos encontrados"
         FRONTEND_ERRORS=1
+    fi
+    
+    echo ""
+    echo "🏗️ Verificando build..."
+    if npm run build --silent; then
+        echo "✅ Build: Compilación exitosa"
+    else
+        echo "❌ Build: Errores de compilación"
+        FRONTEND_ERRORS=1
+    fi
+    
+    echo ""
+    echo "🔒 Auditoria de seguridad..."
+    if npm run audit:security --silent; then
+        echo "✅ NPM Audit: Sin vulnerabilidades críticas"
+    else
+        echo "❌ NPM Audit: Vulnerabilidades encontradas"
+        FRONTEND_ERRORS=1
+    fi
+    
+    echo ""
+    echo "📦 Verificando dependencias obsoletas..."
+    if npm run check-deps --silent; then
+        echo "✅ Dependencies: Todas actualizadas"
+    else
+        echo "⚠️ Dependencies: Algunas dependencias están obsoletas (no crítico)"
     fi
     
     # Verificar si existen tests
