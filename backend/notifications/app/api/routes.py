@@ -61,8 +61,7 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
             "to": phone,
             "name": name,
             "amount": formatted_amount,
-            "date": formatted_date,
-            "template": "moroso"
+            "date": formatted_date
         })
     
     response = {
