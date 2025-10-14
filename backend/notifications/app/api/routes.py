@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta
 
 from ..config.database import get_db_session
 from ..models.alert import Alert
@@ -24,34 +25,50 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
         .group_by(Alert.client_id, Alert.credit_id)
     ).subquery()
 
+    # Get current date and date 10 days from now
+    current_date = datetime.now().date()
+    ten_days_future = current_date + timedelta(days=10)
+
     query = (
         select(
             Client.phone,
             Client.name,
             Installment.installments_value,
-            Installment.payment_date
+            Installment.due_date
         )
         .select_from(subquery)
         .join(Client, subquery.c.client_id == Client.id)
         .join(Installment, subquery.c.latest_installment_id == Installment.id)
+        .where(
+            and_(
+                Installment.due_date >= current_date,
+                Installment.due_date <= ten_days_future
+            )
+        )
     )
     
     result = await db.execute(query)
     rows = result.fetchall()
 
-    response = []
+    recipients = []
     for row in rows:
-        phone, name, amount, payment_date = row
+        phone, name, amount, due_date = row
 
-        formatted_amount = f"{float(amount):,.0f}".replace(",", ".")
-
-        formatted_date = payment_date.strftime("%Y-%m-%d") if payment_date else None
+        formatted_amount = float(amount)
+        formatted_date = due_date.strftime("%Y-%m-%d") if due_date else None
         
-        response.append({
+        recipients.append({
             "to": phone,
             "name": name,
             "amount": formatted_amount,
-            "date": formatted_date
+            "date": formatted_date,
+            "template": "moroso"
         })
+    
+    response = {
+        "phone_number": "default",
+        "language": "Spanish (MEX)",
+        "recipients": recipients
+    }
     
     return response
