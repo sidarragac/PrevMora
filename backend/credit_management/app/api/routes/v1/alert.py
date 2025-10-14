@@ -33,3 +33,10 @@ async def create_alert(
 ):
     controller = AlertController()
     return await controller.create(session, alert)
+
+@router.patch("/update_alert/{alert_id}", response_model=AlertResponse, tags=["Alerts"])
+async def update_alert(
+    alert_id: int, alert: AlertCreate, session: AsyncSession = Depends(get_db_session)
+):
+    controller = AlertController()
+    return await controller.update(session, alert_id, alert)

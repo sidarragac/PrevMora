@@ -40,3 +40,10 @@ async def create_portfolio(
 ):
     controller = PortfolioController()
     return await controller.create(session, portfolio)
+
+@router.patch("/update_portfolio/{portfolio_id}", response_model=PortfolioResponse, tags=["Portfolios"])
+async def update_portfolio(
+    portfolio_id: int, portfolio: PortfolioUpdate, session: AsyncSession = Depends(get_db_session)
+):
+    controller = PortfolioController()
+    return await controller.update(session, portfolio_id, portfolio)

@@ -38,3 +38,10 @@ async def create_manager(
 ):
     controller = ManagerController()
     return await controller.create(session, manager)
+
+@router.patch("/update_manager/{manager_id}", response_model=ManagerResponse, tags=["Managers"])
+async def update_manager(
+    manager_id: int, manager: ManagerUpdate, session: AsyncSession = Depends(get_db_session)
+):
+    controller = ManagerController()
+    return await controller.update(session, manager_id, manager)
