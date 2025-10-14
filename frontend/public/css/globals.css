@@ -9,10 +9,10 @@
   prefersdark: false; /* set as default dark mode (prefers-color-scheme:dark) */
   color-scheme: light; /* color of browser-provided UI */
 
-  --color-base-100: oklch(1 0 0);
-  --color-base-200: oklch(95% 0.03 240);
-  --color-base-300: oklch(92% 0.04 240);
-  --color-base-content: oklch(1 0 0);
+  --color-base-100: oklch(0.9819 0.0164 91.55);
+  --color-base-200: oklch(0.9235 0.0469 91.55);
+  --color-base-300: oklch(0.8706 0.0444 91.55);
+  --color-base-content: oklch(20% 0.05 80);
   --color-primary: oklch(0.862 0.1688 90.98);
   --color-primary-content: oklch(20% 0.05 80);
   --color-secondary: oklch(0.9218 0.0667 83.12);
@@ -65,6 +65,23 @@ button {
   @apply scale-95;
 }
 
+.btn-primary {
+  @apply bg-primary from-primary bg-gradient-to-br to-[#DDAC00] shadow-md shadow-black/30;
+}
+
+.btn-nav-active {
+  @apply bg-secondary shadow-md shadow-black/30;
+}
+
 body {
   @apply text-black;
+}
+
+#landing-main-content {
+  background-image: url('../assets/main-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100%;
 }
