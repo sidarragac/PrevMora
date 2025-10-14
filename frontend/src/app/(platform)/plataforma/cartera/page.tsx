@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Filter, Search, Users } from 'lucide-react';
 
+import NewClientButton from '@/components/clients/new-client-button';
 import ViewToggle from '@/components/clients/view-toggle';
 
 import { ClientsResponse } from '@/types/client';
@@ -9,20 +10,18 @@ import { ClientsResponse } from '@/types/client';
 export const dynamic = 'force-dynamic';
 async function getClients(): Promise<ClientsResponse | null> {
   try {
-    const response = await fetch(
-      'http://localhost:8000/api/PrevMora-Template/v1/clients/get_clients',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          page: 1,
-          page_size: 50,
-        }),
-        cache: 'no-store', // Para desarrollo, en producción usar revalidate
-      }
-    );
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const response = await fetch(`${baseUrl}/clients/get_clients`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        page: 1,
+        page_size: 50,
+      }),
+      cache: 'no-store', // Para desarrollo, en producción usar revalidate
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch clients');
@@ -54,14 +53,15 @@ export default async function CarteraPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="stats shadow-sm">
+          {/* <div className="stats shadow-sm">
             <div className="stat px-4 py-2">
               <div className="stat-title text-xs">Total Clientes</div>
               <div className="stat-value text-primary text-lg">
                 {clientsData?.total || 0}
               </div>
             </div>
-          </div>
+          </div> */}
+          <NewClientButton />
         </div>
       </div>
 

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-
 import { Grid, List } from 'lucide-react';
+
+import { useLocalStorage } from '@/hooks/use-local-storage';
 
 import { Client } from '@/types/client';
 
@@ -20,7 +20,10 @@ export default function ViewToggle({
   clients,
   loading = false,
 }: ViewToggleProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useLocalStorage({
+    key: 'viewMode',
+    value: 'list' as ViewMode,
+  });
 
   return (
     <div className="space-y-4">
@@ -31,7 +34,7 @@ export default function ViewToggle({
         </div>
         <div className="btn-group flex items-center gap-2">
           <button
-            onClick={() => setViewMode('list')}
+            onClick={() => setViewMode({ value: 'list' })}
             className={`btn btn-sm gap-2 ${
               viewMode === 'list' ? 'btn-active' : 'btn-outline'
             }`}
@@ -40,7 +43,7 @@ export default function ViewToggle({
             Lista
           </button>
           <button
-            onClick={() => setViewMode('grid')}
+            onClick={() => setViewMode({ value: 'grid' })}
             className={`btn btn-sm gap-2 ${
               viewMode === 'grid' ? 'btn-active' : 'btn-outline'
             }`}

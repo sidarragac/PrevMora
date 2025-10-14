@@ -12,7 +12,7 @@ import { DashboardData, DashboardStats } from '@/types/dashboard';
 export const dynamic = 'force-dynamic';
 async function fetchDashboardData(): Promise<DashboardData | null> {
   try {
-    const baseUrl = 'http://localhost:8000/api/PrevMora-Template/v1';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const paginationParams = { page: 1, page_size: 10 };
 
     // Fetch all data in parallel

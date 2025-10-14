@@ -8,6 +8,7 @@ from ....schemas.Installment import (
     InstallmentCreate,
     InstallmentList,
     InstallmentResponse,
+    InstallmentUpdate,
 )
 
 router = APIRouter()
@@ -44,7 +45,7 @@ async def create_installment(
 
 @router.patch("/update_installment/{installment_id}", response_model=InstallmentResponse, tags=["Installments"])
 async def update_installment(
-    installment_id: int, installment: InstallmentCreate, session: AsyncSession = Depends(get_db_session)
+    installment_id: int, installment: InstallmentUpdate, session: AsyncSession = Depends(get_db_session)
 ):
     controller = InstallmentController()
     return await controller.update(session, installment_id, installment)
