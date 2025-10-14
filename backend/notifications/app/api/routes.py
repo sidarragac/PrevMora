@@ -58,10 +58,11 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
         formatted_date = due_date.strftime("%Y-%m-%d") if due_date else None
         
         recipients.append({
-            "to": phone,
+            "to": "+"+phone,
             "name": name,
             "amount": formatted_amount,
-            "date": formatted_date
+            "date": formatted_date,
+            "template": "moroso2"
         })
     
     response = {
