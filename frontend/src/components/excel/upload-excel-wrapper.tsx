@@ -16,7 +16,17 @@ interface UploadResult {
   details?: string[];
 }
 
-export default function UploadExcelWrapper() {
+export default function UploadExcelWrapper({
+  uploader,
+  variant,
+}: {
+  uploader?: (file: File) => Promise<{
+    success: boolean;
+    data?: UploadExcelResponse;
+    error?: string;
+  }>;
+  variant?: 'credit' | 'portfolio';
+}) {
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
 
   const handleUploadSuccess = (response: UploadExcelResponse) => {
@@ -117,6 +127,12 @@ export default function UploadExcelWrapper() {
       <UploadExcel
         onUploadSuccess={handleUploadSuccess}
         onUploadError={handleUploadError}
+        uploader={
+          uploader ??
+          (variant === 'portfolio'
+            ? ExcelService.uploadPortfolioExcel
+            : ExcelService.uploadExcel)
+        }
       />
 
       {/* Upload Result Display */}

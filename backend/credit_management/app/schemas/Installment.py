@@ -27,6 +27,7 @@ class InstallmentUpdate(BaseModel):
     due_date: Optional[date] = None
     state: Optional[str] = None
     payment_date: Optional[date] = None
+    installment_state: Optional[str] = None
     payment_amount: Optional[Decimal] = Field(None, gt=0)
     payment_channel: Optional[str] = None
 
