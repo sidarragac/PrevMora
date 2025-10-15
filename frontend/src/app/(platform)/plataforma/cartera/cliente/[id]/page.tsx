@@ -247,44 +247,94 @@ export default async function ClientDetailPage({
                     </div>
                     <div className="space-y-2">
                       {credit.installments.map((installment) => (
-                        <div
-                          key={installment.id}
-                          className="bg-base-100 flex items-center justify-between rounded p-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">
-                              Cuota {installment.installments_number}
-                            </span>
-                            <div
-                              className={`badge badge-sm ${
-                                installment.installment_state === 'Pagada'
-                                  ? 'badge-success'
-                                  : installment.installment_state ===
-                                      'Pendiente'
-                                    ? 'badge-warning'
-                                    : 'badge-error'
-                              }`}
-                            >
-                              {installment.installment_state}
+                        <div key={installment.id} className="space-y-2">
+                          <div className="bg-base-100 flex items-center justify-between rounded p-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                Cuota {installment.installments_number}
+                              </span>
+                              <div
+                                className={`badge badge-sm ${
+                                  installment.installment_state === 'Pagada'
+                                    ? 'badge-success'
+                                    : installment.installment_state ===
+                                        'Pendiente'
+                                      ? 'badge-warning'
+                                      : 'badge-error'
+                                }`}
+                              >
+                                {installment.installment_state}
+                              </div>
+                              {installment.portfolio.length > 0 && (
+                                <div className="badge badge-success badge-outline">
+                                  ⤵︎
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <div className="font-semibold">
+                                  {formatCurrency(
+                                    parseInt(installment.installments_value)
+                                  )}
+                                </div>
+                                <div className="text-base-content/70 text-xs">
+                                  Vence: {formatDate(installment.due_date)}
+                                </div>
+                              </div>
+                              <UpdateInstallmentDueDate
+                                installmentId={installment.id}
+                                currentDueDate={installment.due_date}
+                                currentState={installment.installment_state}
+                              />
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
-                            <div className="text-right">
-                              <div className="font-semibold">
-                                {formatCurrency(
-                                  parseInt(installment.installments_value)
+
+                          {Array.isArray((installment as any).portfolio) &&
+                            (installment as any).portfolio.length > 0 && (
+                              <div className="bg-base-50 border-base-200 space-y-2 rounded border p-2">
+                                {(installment as any).portfolio.map(
+                                  (pf: any) => (
+                                    <div
+                                      key={pf.id}
+                                      className="flex items-start justify-between gap-3"
+                                    >
+                                      <div className="min-w-0 flex-1">
+                                        <div className="text-base-content flex flex-wrap items-center gap-2 text-sm">
+                                          <span className="font-medium">
+                                            {pf.manager_name ||
+                                              `Gestor #${pf.manager_id}`}
+                                          </span>
+                                          <span className="text-base-content/60">
+                                            •
+                                          </span>
+                                          <span>{pf.contact_method}</span>
+                                          <span className="text-base-content/60">
+                                            •
+                                          </span>
+                                          <span>{pf.contact_result}</span>
+                                        </div>
+                                        {pf.observation && (
+                                          <div className="text-base-content/70 text-xs">
+                                            {pf.observation}
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="text-right">
+                                        <div className="text-base-content/70 text-xs">
+                                          Gestión: {pf.management_date}
+                                        </div>
+                                        {pf.payment_promise_date && (
+                                          <div className="text-base-content/70 text-xs">
+                                            Promesa: {pf.payment_promise_date}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )
                                 )}
                               </div>
-                              <div className="text-base-content/70 text-xs">
-                                Vence: {formatDate(installment.due_date)}
-                              </div>
-                            </div>
-                            <UpdateInstallmentDueDate
-                              installmentId={installment.id}
-                              currentDueDate={installment.due_date}
-                              currentState={installment.installment_state}
-                            />
-                          </div>
+                            )}
                         </div>
                       ))}
                     </div>
