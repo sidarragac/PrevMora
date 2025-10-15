@@ -1,0 +1,3 @@
+"""Stats service application package."""
+
+
