@@ -27,7 +27,7 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
 
     # Get current date and date 10 days from now
     current_date = datetime.now().date()
-    ten_days_future = current_date + timedelta(days=10)
+    ten_days_future = current_date + timedelta(days=16)
 
     query = (
         select(
@@ -62,7 +62,7 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
             "name": name,
             "amount": formatted_amount,
             "date": formatted_date,
-            "template": "moroso2"
+            #"template": "moroso2"
         })
     
     response = {
