@@ -13,111 +13,38 @@ export const dynamic = 'force-dynamic';
 async function fetchDashboardData(): Promise<DashboardData | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    const paginationParams = { page: 1, page_size: 10 };
+    const res = await fetch(`${baseUrl}/dashboard/get_dashboard_data`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 1,
+        page_size: 50,
+      }),
+      cache: 'no-store',
+    });
 
-    // Fetch all data in parallel
-    const [
-      clientsResponse,
-      creditsResponse,
-      alertsResponse,
-      installmentsResponse,
-      portfolioResponse,
-      reconciliationsResponse,
-      managersResponse,
-    ] = await Promise.all([
-      fetch(`${baseUrl}/clients/get_clients`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}/credits/get_credits`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}/alerts/get_alerts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}/installments/get_installments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}/portfolios/get_portfolios`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}/reconciliations/get_reconciliations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}/managers/get_managers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paginationParams),
-        cache: 'no-store',
-      }),
-    ]);
-
-    // Check if all requests were successful
-    if (
-      !clientsResponse.ok ||
-      !creditsResponse.ok ||
-      !alertsResponse.ok ||
-      !installmentsResponse.ok ||
-      !portfolioResponse.ok ||
-      !reconciliationsResponse.ok ||
-      !managersResponse.ok
-    ) {
-      throw new Error('One or more API requests failed');
+    if (!res.ok) {
+      throw new Error('Failed to fetch dashboard');
     }
 
-    // Parse all responses
-    const [
-      clientsData,
-      creditsData,
-      alertsData,
-      installmentsData,
-      portfolioData,
-      reconciliationsData,
-      managersData,
-    ] = await Promise.all([
-      clientsResponse.json(),
-      creditsResponse.json(),
-      alertsResponse.json(),
-      installmentsResponse.json(),
-      portfolioResponse.json(),
-      reconciliationsResponse.json(),
-      managersResponse.json(),
-    ]);
+    const data = await res.json();
 
-    // Build stats object
     const stats: DashboardStats = {
-      totalClients: clientsData.total || 0,
-      totalCredits: creditsData.total || 0,
-      totalAlerts: alertsData.total || 0,
-      totalInstallments: installmentsData.total || 0,
-      totalPortfolioManagements: portfolioData.total || 0,
-      totalReconciliations: reconciliationsData.total || 0,
-      totalManagers: managersData.total || 0,
+      totalClients: data.stats?.total_clients ?? 0,
+      totalCredits: data.stats?.total_credits ?? 0,
+      totalAlerts: data.stats?.total_alerts ?? 0,
+      totalInstallments: data.stats?.total_installments ?? 0,
+      totalPortfolioManagements: data.stats?.total_portfolio_managements ?? 0,
+      totalReconciliations: data.stats?.total_reconciliations ?? 0,
+      totalManagers: data.stats?.total_managers ?? 0,
     };
 
     return {
       stats,
-      recentAlerts: alertsData.items || [],
-      recentInstallments: installmentsData.items || [],
-      recentPortfolioManagements: portfolioData.items || [],
-      recentReconciliations: reconciliationsData.items || [],
+      recentAlerts: data.recent_alerts ?? [],
+      recentInstallments: data.recent_installments ?? [],
+      recentPortfolioManagements: data.recent_portfolio_managements ?? [],
+      recentReconciliations: data.recent_reconciliations ?? [],
     };
   } catch (error) {
     console.error('Error fetching dashboard data:', error);

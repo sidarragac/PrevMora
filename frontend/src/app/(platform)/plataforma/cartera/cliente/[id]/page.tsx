@@ -279,12 +279,11 @@ export default async function ClientDetailPage({
                                 Vence: {formatDate(installment.due_date)}
                               </div>
                             </div>
-                            {installment.installment_state !== 'Pagada' && (
-                              <UpdateInstallmentDueDate
-                                installmentId={installment.id}
-                                currentDueDate={installment.due_date}
-                              />
-                            )}
+                            <UpdateInstallmentDueDate
+                              installmentId={installment.id}
+                              currentDueDate={installment.due_date}
+                              currentState={installment.installment_state}
+                            />
                           </div>
                         </div>
                       ))}
