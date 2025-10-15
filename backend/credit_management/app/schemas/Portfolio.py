@@ -33,6 +33,7 @@ class PortfolioUpdate(BaseModel):
 class PortfolioResponse(BaseResponseSchema):
     installment_id: int
     manager_id: int
+    manager_name: str
     contact_method: str
     contact_result: str
     management_date: date

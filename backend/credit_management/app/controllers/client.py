@@ -7,6 +7,7 @@ from ..models.Alert import Alert
 from ..models.Client import Client
 from ..models.Credit import Credit
 from ..models.Installment import Installment
+from ..models.Manager import Manager
 from ..models.Portfolio import Portfolio
 from ..models.Reconciliation import Reconciliation
 from ..schemas.Client import (
@@ -57,7 +58,8 @@ class ClientController(BaseController):
             .options(
                 selectinload(Client.credit)
                 .selectinload(Credit.installment)
-                .selectinload(Installment.portfolio),
+                .selectinload(Installment.portfolio)
+                .selectinload(Portfolio.manager),
                 selectinload(Client.alert),
             )
         )
@@ -84,9 +86,11 @@ class ClientController(BaseController):
                 portfolio_data = []
                 for portfolio in installment.portfolio:
                     total_portfolio_managements += 1
-                    portfolio_data.append(
-                        PortfolioDetailResponse.model_validate(portfolio)
-                    )
+                    portfolio_response = PortfolioDetailResponse.model_validate(portfolio)
+                    # Agregar el nombre del manager si está disponible
+                    if portfolio.manager:
+                        portfolio_response.manager_name = portfolio.manager.name
+                    portfolio_data.append(portfolio_response)
 
                 installment_response = InstallmentDetailResponse.model_validate(
                     installment
