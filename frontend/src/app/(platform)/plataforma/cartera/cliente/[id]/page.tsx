@@ -14,6 +14,9 @@ import {
   Phone,
 } from 'lucide-react';
 
+import EditClientButton from '@/components/clients/edit-client-button';
+import UpdateInstallmentDueDate from '@/components/clients/update-installment-due-date';
+
 import { ClientCompleteData } from '@/types/client';
 
 interface ClientDetailPageProps {
@@ -25,8 +28,9 @@ interface ClientDetailPageProps {
 export const dynamic = 'force-dynamic';
 async function getClientData(id: string): Promise<ClientCompleteData | null> {
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const response = await fetch(
-      `http://localhost:8000/api/PrevMora-Template/v1/clients/get_client_complete_data/${id}`,
+      `${baseUrl}/clients/get_client_complete_data/${id}`,
       {
         method: 'GET',
         headers: {
@@ -112,6 +116,14 @@ export default async function ClientDetailPage({
                 </div>
               </div>
             </div>
+            <EditClientButton
+              clientId={clientData.id}
+              initialEmail={clientData.email}
+              initialPhone={clientData.phone}
+              initialAddress={clientData.address}
+              initialZone={clientData.zone}
+              initialStatus={clientData.status}
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -256,15 +268,23 @@ export default async function ClientDetailPage({
                               {installment.installment_state}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="font-semibold">
-                              {formatCurrency(
-                                parseInt(installment.installments_value)
-                              )}
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <div className="font-semibold">
+                                {formatCurrency(
+                                  parseInt(installment.installments_value)
+                                )}
+                              </div>
+                              <div className="text-base-content/70 text-xs">
+                                Vence: {formatDate(installment.due_date)}
+                              </div>
                             </div>
-                            <div className="text-base-content/70 text-xs">
-                              Vence: {formatDate(installment.due_date)}
-                            </div>
+                            {installment.installment_state !== 'Pagada' && (
+                              <UpdateInstallmentDueDate
+                                installmentId={installment.id}
+                                currentDueDate={installment.due_date}
+                              />
+                            )}
                           </div>
                         </div>
                       ))}

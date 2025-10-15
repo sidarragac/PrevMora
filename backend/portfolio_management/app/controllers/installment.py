@@ -3,7 +3,6 @@ from ..schemas.Installment import (
     InstallmentCreate,
     InstallmentList,
     InstallmentResponse,
-    InstallmentUpdate
 )
 from .base import BaseController
 
@@ -16,7 +15,6 @@ class InstallmentController(BaseController):
             model=Installment,
             get_schema=InstallmentResponse,
             create_schema=InstallmentCreate,
-            update_schema=InstallmentUpdate,
             list_schema=InstallmentList,
             not_found_message="Installment not found",
         )
