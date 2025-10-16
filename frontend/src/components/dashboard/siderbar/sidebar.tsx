@@ -4,6 +4,7 @@ import React from 'react';
 import { SignOutButton } from '@clerk/nextjs';
 import {
   BookOpenCheck,
+  ChartBar,
   File,
   FileArchive,
   HandCoins,
@@ -73,6 +74,13 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             goto="/plataforma/cartera"
             iconActive={<Wallet className="size-6" />}
             iconInactive={<Wallet className="size-6" />}
+            restringed={false}
+          />
+          <NavBtn
+            text="Kpis"
+            goto="/plataforma/kpis"
+            iconActive={<ChartBar className="size-6" />}
+            iconInactive={<ChartBar className="size-6" />}
             restringed={false}
           />
           <ul className="menu bg-base-200 rounded-box w-56">

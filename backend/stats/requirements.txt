@@ -24,3 +24,4 @@ interrogate==1.5.0
 safety
 pre-commit==3.6.0
 coverage==7.4.0
+greenlet
