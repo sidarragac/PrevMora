@@ -51,6 +51,7 @@ class PortfolioDetailResponse(BaseModel):
     id: int
     installment_id: int
     manager_id: int
+    manager_name: Optional[str] = None
     contact_method: str
     contact_result: str
     management_date: date
