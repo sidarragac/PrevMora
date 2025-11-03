@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func, and_,or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from app.config.settings import settings
@@ -75,7 +75,7 @@ async def installments_by_month(db: AsyncSession = Depends(get_db_session)):
         if month_name:
             grouped[month_name].append(item)
     
-    # Overdue installments grouped by month
+    # Overdue installments grouped by month (based on payment_date > due_date)
     overdue_query = select(
         Installment.id,
         Installment.credit_id,
@@ -84,7 +84,15 @@ async def installments_by_month(db: AsyncSession = Depends(get_db_session)):
         Installment.installments_value,
         Installment.installment_state,
         Installment.payment_date,
-    ).where(Installment.installment_state == "Vencida")
+    ).where(
+        or_(
+            and_(
+                Installment.payment_date.is_not(None),
+                Installment.payment_date > Installment.due_date,
+            ),
+            Installment.installment_state == "Vencida",
+        )
+    )
 
     overdue_result = await db.execute(overdue_query)
     overdue_rows = overdue_result.fetchall()
@@ -154,17 +162,18 @@ async def installments_by_month(db: AsyncSession = Depends(get_db_session)):
     
     for i in range(len(grouped)):
             for j in range(len(grouped[Meses[i]])):
-                if grouped[Meses[i]][j]['installment_state']=="Pagada":
-                    MontoPorMes[i]=MontoPorMes[i]+float(grouped[Meses[i]][j]['installments_value'])  
+                if grouped[Meses[i]][j]['payment_date'] is not None:
+                    if grouped[Meses[i]][j]['payment_date']>grouped[Meses[i]][j]['due_date']:
+                        if i==10:
+                            logging.info(f"Deuda: {grouped[Meses[i]][j]['installments_value']}")
+                        DeudaPorMes[i]=DeudaPorMes[i]+float(grouped[Meses[i]][j]['installments_value'])
+                    else:
+                        MontoPorMes[i]=MontoPorMes[i]+float(grouped[Meses[i]][j]['installments_value'])
                 if grouped[Meses[i]][j]['installment_state']=="Vencida":
                     DeudaPorMes[i]=DeudaPorMes[i]+float(grouped[Meses[i]][j]['installments_value'])
+
+
     for i in range(len(MontoPorMes)):
         BalancePorMes[i]=MontoPorMes[i]-DeudaPorMes[i]
-    logging.info(f"Deuda por mes: {DeudaPorMes}")
-    logging.info(f"Monto por mes: {MontoPorMes}")
-    logging.info(f"Balance por mes: {BalancePorMes}")
-    
-        
-
     return {"installments": grouped, "datos": datos, "DeudaPorMes": DeudaPorMes, "MontoPorMes": MontoPorMes, "BalancePorMes": BalancePorMes}
 
