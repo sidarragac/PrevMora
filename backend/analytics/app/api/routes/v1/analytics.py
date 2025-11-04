@@ -11,7 +11,7 @@ from ....config.database import get_db_session
 from ....schemas.Report import ReportFilters
 from ....utils.ReportGeneratorService import ReportGeneratorService
 
-router = APIRouter(prefix="/analytics/reports", tags=["Analytics Reports"])
+router = APIRouter()
 
 
 class GenerateReportRequest(BaseModel):
