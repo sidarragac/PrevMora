@@ -1,20 +1,35 @@
-
 name: Lint Backend
+
 on:
-  workflow_dispatch: {}
-  pull_request:
-    paths: ["backend/**", ".github/workflows/**"]
   push:
-    branches: [ main, develop ]
-    paths: ["backend/**", ".github/workflows/**"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/**"
+
+concurrency:
+  group: lint-backend-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    defaults: { run: { shell: bash, working-directory: backend } }
+    defaults:
+      run:
+        shell: bash
+        working-directory: backend
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
@@ -29,22 +44,26 @@ jobs:
           [[ -f requirements.txt ]] && pip install -r requirements.txt
           [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt
           [[ -f pyproject.toml ]] && pip install .
-          # Asegura linters aunque no estén en tus archivos
           pip install "black==24.8.0" "isort==5.13.2" "ruff==0.6.9" "pylint==3.2.6" "flake8==7.1.1"
 
-      - name: Black (advisory)
-        run: black --check --diff .
-        continue-on-error: true
-      - name: isort
+      - name: isort (imports check)
         run: isort --check-only --df .
-      - name: Ruff (opcional)
+
+      - name: Black (format check)
+        run: black --check --diff .
+
+      - name: Ruff (optional)
         run: ruff check . || true
+
       - name: Pylint
         run: |
           TARGETS="."
           [[ -d app ]] && TARGETS="app"
           [[ -d src ]] && TARGETS="src"
           [[ -d credit_management ]] && TARGETS="credit_management"
+          [[ -d analytics ]] && TARGETS="$TARGETS analytics"
+          [[ -d notifications ]] && TARGETS="$TARGETS notifications"
           pylint $TARGETS
-      - name: Flake8 (opcional)
+
+      - name: Flake8 (optional)
         run: flake8 . || true
