@@ -101,13 +101,15 @@ class CreditDetailResponse(BaseModel):
         if isinstance(v, int):
             return v / INTEREST_RATE_MULTIPLIER
         return v
-    
+
     class Config:
         from_attributes = True
+
 
 class CreditCalculatedInstallmentResponse(CreditDetailResponse):
     total_paid: Optional[int] = None
     total_pending: Optional[int] = None
+
 
 class AlertDetailResponse(BaseModel):
     id: int

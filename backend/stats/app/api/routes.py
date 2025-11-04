@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta
 import pathlib
 import sys
+from datetime import datetime, timedelta
 from enum import Enum
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-
 
 router = APIRouter()
 
@@ -104,8 +103,12 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
 @router.get("/overdue-installments")
 async def get_overdue_installments(
     db: AsyncSession = Depends(get_db_session),
-    month_ref: MonthEnum = Query(default=MonthEnum.Enero, description="Mes de referencia"),
-    month_cmp: MonthEnum = Query(default=MonthEnum.Febrero, description="Mes a comparar"),
+    month_ref: MonthEnum = Query(
+        default=MonthEnum.Enero, description="Mes de referencia"
+    ),
+    month_cmp: MonthEnum = Query(
+        default=MonthEnum.Febrero, description="Mes a comparar"
+    ),
 ):
     query = select(
         Installment.id,
@@ -118,7 +121,7 @@ async def get_overdue_installments(
     ).where(Installment.installment_state == "Vencida")
 
     result = await db.execute(query)
-    rows = result.fetchall() 
+    rows = result.fetchall()
     print(rows)
 
     installments = []
@@ -141,49 +144,76 @@ async def get_overdue_installments(
                 "due_date": due_date.strftime("%Y-%m-%d") if due_date else None,
                 "installments_value": float(installments_value),
                 "installment_state": installment_state,
-                "payment_date": payment_date.strftime("%Y-%m-%d") if payment_date else None,
+                "payment_date": (
+                    payment_date.strftime("%Y-%m-%d") if payment_date else None
+                ),
             }
         )
-        cantidad_cuotas_vencidas_mes={"Enero":[0,0],"Febrero":[0,0],"Marzo":[0,0],
-        "Abril":[0,0],"Mayo":[0,0],"Junio":[0,0],"Julio":[0,0],"Agosto":[0,0],"Septiembre":[0,0],
-        "Octubre":[0,0],"Noviembre":[0,0],"Diciembre":[0,0]}
+        cantidad_cuotas_vencidas_mes = {
+            "Enero": [0, 0],
+            "Febrero": [0, 0],
+            "Marzo": [0, 0],
+            "Abril": [0, 0],
+            "Mayo": [0, 0],
+            "Junio": [0, 0],
+            "Julio": [0, 0],
+            "Agosto": [0, 0],
+            "Septiembre": [0, 0],
+            "Octubre": [0, 0],
+            "Noviembre": [0, 0],
+            "Diciembre": [0, 0],
+        }
 
         for installment in installments:
-           due_date = installment["due_date"]
-           if due_date:
-               month = due_date.split("-")[1]
-               if month=="01":
-                   month="Enero"
-               elif month=="02":
-                   month="Febrero"
-               elif month=="03":
-                   month="Marzo"
-               elif month=="04":
-                   month="Abril"
-               elif month=="05":
-                   month="Mayo"
-               elif month=="06":
-                   month="Junio"
-               elif month=="07":
-                   month="Julio"
-               elif month=="08":
-                   month="Agosto"
-               elif month=="09":
-                   month="Septiembre"
-               elif month=="10":
-                   month="Octubre"
-               elif month=="11":
-                   month="Noviembre"
-               elif month=="12":
-                   month="Diciembre"
-               cantidad_cuotas_vencidas_mes[month][0]=cantidad_cuotas_vencidas_mes[month][0]+installment["installments_value"]
-               cantidad_cuotas_vencidas_mes[month][1]=cantidad_cuotas_vencidas_mes[month][1]+1
-
+            due_date = installment["due_date"]
+            if due_date:
+                month = due_date.split("-")[1]
+                if month == "01":
+                    month = "Enero"
+                elif month == "02":
+                    month = "Febrero"
+                elif month == "03":
+                    month = "Marzo"
+                elif month == "04":
+                    month = "Abril"
+                elif month == "05":
+                    month = "Mayo"
+                elif month == "06":
+                    month = "Junio"
+                elif month == "07":
+                    month = "Julio"
+                elif month == "08":
+                    month = "Agosto"
+                elif month == "09":
+                    month = "Septiembre"
+                elif month == "10":
+                    month = "Octubre"
+                elif month == "11":
+                    month = "Noviembre"
+                elif month == "12":
+                    month = "Diciembre"
+                cantidad_cuotas_vencidas_mes[month][0] = (
+                    cantidad_cuotas_vencidas_mes[month][0]
+                    + installment["installments_value"]
+                )
+                cantidad_cuotas_vencidas_mes[month][1] = (
+                    cantidad_cuotas_vencidas_mes[month][1] + 1
+                )
 
     # Calcular variación MoM por mes usando el conteo (posición 1)
     month_order = [
-        "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-        "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre",
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
     ]
     prev_count = None
     for m in month_order:
@@ -202,13 +232,22 @@ async def get_overdue_installments(
     if month_ref and month_cmp:
         ref_name = month_ref.value
         cmp_name = month_cmp.value
-        if ref_name in cantidad_cuotas_vencidas_mes and cmp_name in cantidad_cuotas_vencidas_mes:
+        if (
+            ref_name in cantidad_cuotas_vencidas_mes
+            and cmp_name in cantidad_cuotas_vencidas_mes
+        ):
             # ref = previo, cmp = actual
             ref_count = cantidad_cuotas_vencidas_mes[ref_name][1]
             cmp_count = cantidad_cuotas_vencidas_mes[cmp_name][1]
             delta = cmp_count - ref_count
-            direction = "aumentó" if delta > 0 else ("disminuyó" if delta < 0 else "igual")
-            percent_str = "no se puede comparar" if ref_count == 0 else f"{round(((cmp_count - ref_count) / ref_count) * 100)}%"
+            direction = (
+                "aumentó" if delta > 0 else ("disminuyó" if delta < 0 else "igual")
+            )
+            percent_str = (
+                "no se puede comparar"
+                if ref_count == 0
+                else f"{round(((cmp_count - ref_count) / ref_count) * 100)}%"
+            )
             comparison = {
                 "reference_month": ref_name,
                 "compare_month": cmp_name,
@@ -220,4 +259,3 @@ async def get_overdue_installments(
             }
 
     return {"installments": cantidad_cuotas_vencidas_mes, "comparison": comparison}
-

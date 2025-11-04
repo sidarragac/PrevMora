@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy import select, func, and_
-from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
+
+from fastapi import APIRouter, Depends
+from sqlalchemy import and_, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config.database import get_db_session
 from ..models.alert import Alert
@@ -18,7 +19,7 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
         select(
             Alert.client_id,
             Alert.credit_id,
-            func.max(Installment.id).label("latest_installment_id")
+            func.max(Installment.id).label("latest_installment_id"),
         )
         .select_from(Alert)
         .join(Installment, Alert.credit_id == Installment.credit_id)
@@ -34,7 +35,7 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
             Client.phone,
             Client.name,
             Installment.installments_value,
-            Installment.due_date
+            Installment.due_date,
         )
         .select_from(subquery)
         .join(Client, subquery.c.client_id == Client.id)
@@ -42,11 +43,11 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
         .where(
             and_(
                 Installment.due_date >= current_date,
-                Installment.due_date <= ten_days_future
+                Installment.due_date <= ten_days_future,
             )
         )
     )
-    
+
     result = await db.execute(query)
     rows = result.fetchall()
 
@@ -56,19 +57,21 @@ async def get_client_alerts(db: AsyncSession = Depends(get_db_session)):
 
         formatted_amount = float(amount)
         formatted_date = due_date.strftime("%Y-%m-%d") if due_date else None
-        
-        recipients.append({
-            "to": "+"+phone,
-            "name": name,
-            "amount": formatted_amount,
-            "date": formatted_date,
-            #"template": "moroso2"
-        })
-    
+
+        recipients.append(
+            {
+                "to": "+" + phone,
+                "name": name,
+                "amount": formatted_amount,
+                "date": formatted_date,
+                # "template": "moroso2"
+            }
+        )
+
     response = {
         "phone_number": "default",
         "language": "Spanish (MEX)",
-        "recipients": recipients
+        "recipients": recipients,
     }
-    
+
     return response

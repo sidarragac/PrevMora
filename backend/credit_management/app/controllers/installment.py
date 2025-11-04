@@ -3,7 +3,7 @@ from ..schemas.Installment import (
     InstallmentCreate,
     InstallmentList,
     InstallmentResponse,
-    InstallmentUpdate
+    InstallmentUpdate,
 )
 from .base import BaseController
 

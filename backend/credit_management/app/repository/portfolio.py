@@ -2,10 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from ..models.Portfolio import Portfolio
 from ..models.Manager import Manager
-from ..schemas.Portfolio import PortfolioList, PortfolioResponse
+from ..models.Portfolio import Portfolio
 from ..schemas.base import PaginationParams
+from ..schemas.Portfolio import PortfolioList, PortfolioResponse
 from .base import BaseRepository
 
 
@@ -58,9 +58,7 @@ class PortfolioRepository(BaseRepository):
         pages = 0
 
         if estimate_count:
-            total_result = await db.execute(
-                select(func.count()).select_from(Portfolio)
-            )
+            total_result = await db.execute(select(func.count()).select_from(Portfolio))
             total = total_result.scalar_one()
             pages = (
                 (total + pagination.page_size - 1) // pagination.page_size

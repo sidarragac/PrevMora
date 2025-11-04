@@ -14,7 +14,9 @@ class NotificationsSettings(BaseSettings):
     APP_NAME: str = config("APP_NAME", default="PrevMora-Notifications")
     APP_VERSION: str = config("APP_VERSION", default="0.1.0")
     TIMEZONE: str = config("TIMEZONE", default="UTC-05")
-    DESCRIPTION: str = config("DESCRIPTION", default="Notifications microservice for PrevMora")
+    DESCRIPTION: str = config(
+        "DESCRIPTION", default="Notifications microservice for PrevMora"
+    )
     DEBUG: bool = config("DEBUG", cast=bool, default=False)
     ENVIRONMENT: str = config("ENVIRONMENT", default="local")
     LOG_LEVEL: str = config("LOG_LEVEL", default="DEBUG")

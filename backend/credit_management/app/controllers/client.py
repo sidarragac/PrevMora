@@ -17,11 +17,11 @@ from ..schemas.Client import (
     ClientList,
     ClientResponse,
     ClientUpdate,
+    CreditCalculatedInstallmentResponse,
     CreditDetailResponse,
     InstallmentDetailResponse,
     PortfolioDetailResponse,
     ReconciliationDetailResponse,
-    CreditCalculatedInstallmentResponse,
 )
 from .base import BaseController
 
@@ -85,7 +85,9 @@ class ClientController(BaseController):
                 portfolio_data = []
                 for portfolio in installment.portfolio:
                     total_portfolio_managements += 1
-                    portfolio_response = PortfolioDetailResponse.model_validate(portfolio)
+                    portfolio_response = PortfolioDetailResponse.model_validate(
+                        portfolio
+                    )
                     if portfolio.manager:
                         portfolio_response.manager_name = portfolio.manager.name
                     portfolio_data.append(portfolio_response)
@@ -128,7 +130,7 @@ class ClientController(BaseController):
         client_response.total_reconciliations = len(reconciliations_data)
 
         return client_response
-    
+
     async def get_credits_detailed(
         self, session: AsyncSession, client_id: int
     ) -> list[CreditCalculatedInstallmentResponse]:
@@ -149,7 +151,9 @@ class ClientController(BaseController):
         credits = result.scalars().all()
 
         if not credits:
-            raise HTTPException(status_code=404, detail="No credits found for the client")
+            raise HTTPException(
+                status_code=404, detail="No credits found for the client"
+            )
 
         credits_data = []
 
@@ -158,7 +162,9 @@ class ClientController(BaseController):
             for installment in credit.installment:
                 portfolio_data = []
                 for portfolio in installment.portfolio:
-                    portfolio_response = PortfolioDetailResponse.model_validate(portfolio)
+                    portfolio_response = PortfolioDetailResponse.model_validate(
+                        portfolio
+                    )
                     if portfolio.manager:
                         portfolio_response.manager_name = portfolio.manager.name
                     portfolio_data.append(portfolio_response)

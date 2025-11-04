@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -66,8 +67,11 @@ async def get_client_complete_data(
     controller = ClientController()
     return await controller.get_client_complete_data(session, client_id)
 
+
 @router.get(
-    "/get_credits_detailed/{client_id}", response_model=List[CreditCalculatedInstallmentResponse], tags=["Clients"]
+    "/get_credits_detailed/{client_id}",
+    response_model=List[CreditCalculatedInstallmentResponse],
+    tags=["Clients"],
 )
 async def get_credits_detailed(
     client_id: int, session: AsyncSession = Depends(get_db_session)

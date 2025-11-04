@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models.Portfolio import Portfolio
 from ..repository.portfolio import PortfolioRepository
+from ..schemas.base import PaginationParams
 from ..schemas.Portfolio import (
     PortfolioCreate,
     PortfolioList,
     PortfolioResponse,
     PortfolioUpdate,
 )
-from ..schemas.base import PaginationParams
 from .base import BaseController
 
 
@@ -30,7 +30,9 @@ class PortfolioController(BaseController):
         """Create and return a custom portfolio repository instance."""
         return PortfolioRepository()
 
-    async def get_by_id(self, session: AsyncSession, resource_id: int) -> PortfolioResponse:
+    async def get_by_id(
+        self, session: AsyncSession, resource_id: int
+    ) -> PortfolioResponse:
         """Get a portfolio by ID with manager information."""
         repository = self._get_repository()
         resource = await repository.get_by_id(session, resource_id)

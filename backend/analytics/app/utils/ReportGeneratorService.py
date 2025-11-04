@@ -151,7 +151,7 @@ class ReportGeneratorService:
             conditions.append(Credit.disbursement_date >= period_start)
         if period_end:
             conditions.append(Credit.disbursement_date <= period_end)
-        
+
         # Handle manager filter with a subquery
         if filters and filters.manager_id:
             # Only include credits that have at least one installment managed by this manager
@@ -176,10 +176,7 @@ class ReportGeneratorService:
             # Get manager info for all credits
             credit_ids = [r.credit_id for r in records]
             manager_query = (
-                select(
-                    Credit.id.label("credit_id"),
-                    Manager.name.label("manager_name")
-                )
+                select(Credit.id.label("credit_id"), Manager.name.label("manager_name"))
                 .join(Installment, Credit.id == Installment.credit_id)
                 .join(Portfolio, Installment.id == Portfolio.installment_id)
                 .join(Manager, Portfolio.manager_id == Manager.id)
@@ -198,7 +195,7 @@ class ReportGeneratorService:
 
         for record in records:
             manager_name = credit_managers.get(record.credit_id, "Sin asignar")
-            
+
             credits_data.append(
                 {
                     "credit_id": record.credit_id,
@@ -378,7 +375,15 @@ class ReportGeneratorService:
 
             credits_table = Table(
                 table_data,
-                colWidths=[1 * inch, 1.2 * inch, 0.9 * inch, 0.9 * inch, 0.8 * inch, 0.8 * inch, 1 * inch],
+                colWidths=[
+                    1 * inch,
+                    1.2 * inch,
+                    0.9 * inch,
+                    0.9 * inch,
+                    0.8 * inch,
+                    0.8 * inch,
+                    1 * inch,
+                ],
             )
             credits_table.setStyle(
                 TableStyle(
@@ -392,7 +397,12 @@ class ReportGeneratorService:
                         ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
                         ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                         ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+                        (
+                            "ROWBACKGROUNDS",
+                            (0, 1),
+                            (-1, -1),
+                            [colors.white, colors.lightgrey],
+                        ),
                     ]
                 )
             )

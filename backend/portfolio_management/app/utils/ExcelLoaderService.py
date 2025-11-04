@@ -12,7 +12,7 @@ from ..models.Reconciliation import Reconciliation
 class ReconciliationExcelService:
     """
     Service for loading reconciliation data from Excel files.
-    
+
     Expected Excel format:
     - Fecha (Date): Transaction date
     - Referencia_Pago (String): Payment reference
@@ -68,7 +68,9 @@ class ReconciliationExcelService:
             ]
 
             if missing_columns:
-                error_msg = f"Columnas requeridas faltantes: {', '.join(missing_columns)}"
+                error_msg = (
+                    f"Columnas requeridas faltantes: {', '.join(missing_columns)}"
+                )
                 logger.error(error_msg)
                 results["errors"].append(error_msg)
                 return results
@@ -76,7 +78,7 @@ class ReconciliationExcelService:
             logger.info(f"Procesando {len(excel_data)} filas de conciliaciones")
 
             # Process each row
-            i: int = 2 # Row counter to track logs
+            i: int = 2  # Row counter to track logs
             for index, row in excel_data.iterrows():
                 try:
                     # Skip empty rows
@@ -103,7 +105,9 @@ class ReconciliationExcelService:
                     payment_reference = str(row["Referencia_Pago"]).strip()
 
                     # Verify that a credit with this payment_reference exists
-                    stmt = select(Credit).where(Credit.payment_reference == payment_reference)
+                    stmt = select(Credit).where(
+                        Credit.payment_reference == payment_reference
+                    )
                     result = await session.execute(stmt)
                     credit = result.scalar_one_or_none()
 
@@ -154,11 +158,11 @@ class ReconciliationExcelService:
 
                     session.add(reconciliation)
                     await session.flush()  # Flush to get the ID before commit
-                    
+
                     # Update credit state to "Cancelado"
                     credit.credit_state = "Cancelado"
                     session.add(credit)
-                    
+
                     # Store the generated ID and track updated credit
                     results["created_ids"].append(reconciliation.id)
                     results["updated_credit_ids"].append(credit.id)
