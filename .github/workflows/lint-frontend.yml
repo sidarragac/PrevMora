@@ -2,106 +2,22 @@ name: Lint Frontend
 
 on:
   push:
-    paths:
-      - "frontend/**"
-      - ".github/workflows/lint-frontend.yml"
+    paths: ["frontend/**", ".github/workflows/lint-frontend.yml"]
   pull_request:
-    paths:
-      - "frontend/**"
-      - ".github/workflows/lint-frontend.yml"
+    paths: ["frontend/**", ".github/workflows/lint-frontend.yml"]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     defaults:
       run:
-        shell: bash
         working-directory: frontend
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
-
-      - name: Install deps
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install --no-audit --no-fund
-          fi
-
-      - name: ESLint (try project config, else fallback flat-config)
-        run: |
-          set -e
-          try_project_lint() {
-            if npm run | grep -q " lint"; then
-              npm run lint
-            elif [ -f ./node_modules/.bin/next ]; then
-              npx next lint
-            else
-              npx eslint . --ext .ts,.tsx,.js,.jsx
-            fi
-          }
-
-          if try_project_lint; then
-            echo "Project ESLint passed."
-            exit 0
-          fi
-
-          echo "Falling back to flat-config ESLint 9..."
-          npm i -D eslint@9 @eslint/js@9 typescript-eslint@8 eslint-plugin-react@7 eslint-plugin-react-hooks@5 >/dev/null
-
-          cat > ci-eslint.config.mjs <<'EOF'
-          import js from "@eslint/js";
-          import tseslint from "typescript-eslint";
-          import reactPlugin from "eslint-plugin-react";
-          import reactHooks from "eslint-plugin-react-hooks";
-
-          export default [
-            js.configs.recommended,
-            ...tseslint.configs.recommended,
-            {
-              files: ["**/*.{js,jsx,ts,tsx}"],
-              languageOptions: {
-                ecmaVersion: "latest",
-                sourceType: "module",
-                parser: tseslint.parser,
-                parserOptions: { project: false, tsconfigRootDir: process.cwd() }
-              },
-              plugins: {
-                react: reactPlugin,
-                "react-hooks": reactHooks
-              },
-              rules: {
-                "react/jsx-uses-react": "off",
-                "react/react-in-jsx-scope": "off"
-              },
-              settings: {
-                react: { version: "detect" }
-              }
-            }
-          ];
-          EOF
-
-          npx eslint -c ./ci-eslint.config.mjs . --ext .ts,.tsx,.js,.jsx
-
-      - name: Type check (no emit)
-        run: |
-          if npm run | grep -q " type-check"; then
-            npm run type-check
-          else
-            npx tsc --noEmit || true
-          fi
-
-      - name: Prettier (check)
-        run: |
-          if npm run | grep -q " format:check"; then
-            npm run format:check
-          else
-            npx prettier . --check || true
-          fi
+      - run: npm ci
+      - run: npm run lint
