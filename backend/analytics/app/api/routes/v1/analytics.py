@@ -1,7 +1,9 @@
+import os
 from datetime import date
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,38 +26,13 @@ class GenerateReportRequest(BaseModel):
         from_attributes = True
 
 
-class ReportStatistics(BaseModel):
-    """Estadísticas del reporte"""
-    
-    total_clients: int
-    total_credits: int
-    total_amount: int
-    
-    class Config:
-        from_attributes = True
-
-
-class GenerateReportResponse(BaseModel):
-    """Respuesta de generación de reporte"""
-    
-    file_path: str
-    file_size: int
-    total_clients: int
-    total_credits: int
-    total_amount: int
-    status: str
-    
-    class Config:
-        from_attributes = True
-
-
-@router.post("/generate", response_model=GenerateReportResponse)
+@router.post("/generate")
 async def generate_report(
     request: GenerateReportRequest,
     session: AsyncSession = Depends(get_db_session),
 ):
     """
-    Generate a portfolio report based on filters
+    Generate and download a portfolio report as PDF
     
     - **report_title**: Custom title for the report (default: "Reporte de Cartera")
     - **period_start**: Start date for the report period (required, format: YYYY-MM-DD)
@@ -63,19 +40,13 @@ async def generate_report(
     - **filters**: Optional filters object
     
     **Available Filters:**
-    - credit_state (string): Filter by credit state (e.g., "Activo", "Pendiente", "Vencido", "Cancelado")
-    - client_zone (string): Filter by client zone (e.g., "Norte", "Sur", "Centro")
+    - credit_state (string): Filter by credit state (e.g., "Vigente", "Pendiente", "Cancelado")
+    - client_zone (string): Filter by client zone (e.g., "Rural", "Urbano")
     - manager_id (integer): Filter by manager ID
-    - debt_age_min (integer): Minimum debt age in days
-    - debt_age_max (integer): Maximum debt age in days
+    - debt_age_min (integer): Minimum debt age in days (based on disbursement date)
+    - debt_age_max (integer): Maximum debt age in days (based on disbursement date)
     
-    **Returns:**
-    - file_path: Path to generated PDF
-    - file_size: Size of PDF in bytes
-    - total_clients: Number of unique clients
-    - total_credits: Number of credits
-    - total_amount: Total disbursed amount
-    - status: Generation status ("completed" or "failed")
+    **Returns:** PDF file download
     """
     try:
         # Initialize service
@@ -97,7 +68,28 @@ async def generate_report(
                 detail=result.get("error_message", "Unknown error generating report")
             )
         
-        return GenerateReportResponse(**result)
+        # Get file path
+        file_path = result["file_path"]
+        
+        # Verify file exists
+        if not os.path.exists(file_path):
+            raise HTTPException(
+                status_code=500,
+                detail="Report file was generated but not found"
+            )
+        
+        # Generate clean filename for download
+        filename = os.path.basename(file_path)
+        
+        # Return file as download response
+        return FileResponse(
+            path=file_path,
+            media_type="application/pdf",
+            filename=filename,
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"'
+            }
+        )
         
     except HTTPException:
         raise
