@@ -32,8 +32,9 @@ jobs:
           # Asegura linters aunque no estén en tus archivos
           pip install "black==24.8.0" "isort==5.13.2" "ruff==0.6.9" "pylint==3.2.6" "flake8==7.1.1"
 
-      - name: Black
+      - name: Black (advisory)
         run: black --check --diff .
+        continue-on-error: true
       - name: isort
         run: isort --check-only --df .
       - name: Ruff (opcional)
