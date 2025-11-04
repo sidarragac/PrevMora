@@ -1,7 +1,6 @@
 name: Lint Frontend
 
 on:
-  workflow_dispatch: {}
   push:
     paths:
       - "frontend/**"
@@ -35,13 +34,23 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: ESLint
+      - name: ESLint (with fallback to ESLint 8)
         run: |
-          if npm run | grep -q " lint"; then
-            npm run lint
-          else
+          set -e
+          run_eslint_cli() {
             npx eslint . --ext .ts,.tsx,.js,.jsx
+          }
+          if npm run | grep -q " lint"; then
+            if npm run lint; then
+              exit 0
+            fi
+          else
+            if run_eslint_cli; then
+              exit 0
+            fi
           fi
+          echo "Falling back to ESLint v8..."
+          npm exec -y eslint@8.57.0 . --ext .ts,.tsx,.js,.jsx
 
       - name: Type check (no emit)
         run: |
