@@ -77,20 +77,23 @@ jobs:
           pylint $TARGETS | tee pylint.log || true
 
       - name: Summarize results
+        shell: bash
         run: |
-          parse_count () { grep -E "^[+-]{3}|E[0-9]{3}|W[0-9]{3}" "$1" 2>/dev/null | wc -l; }
-          ISORT=$(parse_count isort.log)
-          BLACK=$(parse_count black.log)
-          RUFF=$(grep -E "^\w+/.+\:\d+\:\d+" ruff.log 2>/dev/null | wc -l)
-          PYLINT_E=$(grep -E "^[CRWEF]\:" pylint.log 2>/dev/null | wc -l)
-
+          set +e
+          set +o pipefail
+      
+          ISORT=$(grep -E -c "^(---|\\+\\+\\+|ERROR:)" isort.log 2>/dev/null || echo 0)
+          BLACK=$(grep -E -c "^(would reformat|diff --git)" black.log 2>/dev/null || echo 0)
+          RUFF=$(grep -E -c "^[^[:space:]]+/.+:[0-9]+:[0-9]+" ruff.log 2>/dev/null || echo 0)
+          PYLINT_MSGS=$(grep -E -c "^[CRWEF]:" pylint.log 2>/dev/null || echo 0)
+      
           {
             echo "### Backend Lint (advisory)"
             echo "- isort findings: ${ISORT}"
             echo "- black findings: ${BLACK}"
             echo "- ruff findings: ${RUFF}"
-            echo "- pylint messages: ${PYLINT_E}"
-            echo ""
+            echo "- pylint messages: ${PYLINT_MSGS}"
+            echo
             echo "Artifacts:"
             echo "- \`isort.log\`"
             echo "- \`black.log\`"
