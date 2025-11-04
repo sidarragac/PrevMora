@@ -14,6 +14,9 @@ concurrency:
   group: lint-backend-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -32,7 +35,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
+          cache: pip
           cache-dependency-path: |
             backend/requirements.txt
             backend/requirements-dev.txt
@@ -44,7 +47,22 @@ jobs:
           [[ -f requirements.txt ]] && pip install -r requirements.txt
           [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt
           [[ -f pyproject.toml ]] && pip install .
-          pip install "black==24.8.0" "isort==5.13.2" "ruff==0.6.9" "pylint==3.2.6" "flake8==7.1.1"
+          pip install black==24.8.0 isort==5.13.2 ruff==0.6.9 pylint==3.2.6 flake8==7.1.1
+
+      - name: Auto-format on non-main
+        if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          isort .
+          black .
+
+      - name: Auto-commit style changes
+        if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style(backend): apply isort+black"
+          file_pattern: backend/**
+          commit_user_name: "prevmora-bot"
+          commit_user_email: "actions@users.noreply.github.com"
 
       - name: isort (imports check)
         run: isort --check-only --df .
