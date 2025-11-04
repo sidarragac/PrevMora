@@ -1,4 +1,4 @@
-name: Lint Backend (advisory + autofix + logs)
+name: Lint Backend
 
 on:
   push:
