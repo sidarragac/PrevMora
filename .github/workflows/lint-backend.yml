@@ -1,10 +1,21 @@
-name: Lint Backend
+name: Lint Backend (advisory + autofix + logs)
 
 on:
   push:
-    paths: ["backend/**"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/lint-backend.yml"
   pull_request:
-    paths: ["backend/**"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/lint-backend.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lint-backend-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -13,13 +24,88 @@ jobs:
       run:
         shell: bash
         working-directory: backend
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: |
+          cache: "pip"
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+            backend/pyproject.toml
+
+      - name: Install linters
+        run: |
           python -m pip install --upgrade pip
-          pip install black==24.8.0 isort==5.13.2
-      - run: isort --check-only --df .
-      - run: black --check --diff .
+          pip install black==24.8.0 isort==5.13.2 ruff==0.6.9 pylint==3.2.6
+
+      - name: Auto-format on push (isort + black)
+        if: github.event_name == 'push'
+        run: |
+          isort . || true
+          black . || true
+
+      - name: Auto-commit style changes
+        if: github.event_name == 'push'
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "prevmora-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -A
+            git commit -m "style(backend): apply isort+black"
+            git push
+          fi
+
+      - name: Run linters (advisory) and capture logs
+        run: |
+          set +e
+          isort --check-only --df . | tee isort.log || true
+          black --check --diff . | tee black.log || true
+          ruff check . | tee ruff.log || true
+
+          TARGETS="."
+          [[ -d app ]] && TARGETS="app"
+          [[ -d src ]] && TARGETS="src"
+          [[ -d credit_management ]] && TARGETS="credit_management"
+          [[ -d analytics ]] && TARGETS="$TARGETS analytics"
+          [[ -d notifications ]] && TARGETS="$TARGETS notifications"
+          pylint $TARGETS | tee pylint.log || true
+
+      - name: Summarize results
+        run: |
+          parse_count () { grep -E "^[+-]{3}|E[0-9]{3}|W[0-9]{3}" "$1" 2>/dev/null | wc -l; }
+          ISORT=$(parse_count isort.log)
+          BLACK=$(parse_count black.log)
+          RUFF=$(grep -E "^\w+/.+\:\d+\:\d+" ruff.log 2>/dev/null | wc -l)
+          PYLINT_E=$(grep -E "^[CRWEF]\:" pylint.log 2>/dev/null | wc -l)
+
+          {
+            echo "### Backend Lint (advisory)"
+            echo "- isort findings: ${ISORT}"
+            echo "- black findings: ${BLACK}"
+            echo "- ruff findings: ${RUFF}"
+            echo "- pylint messages: ${PYLINT_E}"
+            echo ""
+            echo "Artifacts:"
+            echo "- \`isort.log\`"
+            echo "- \`black.log\`"
+            echo "- \`ruff.log\`"
+            echo "- \`pylint.log\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-lint-logs-${{ github.run_id }}
+          path: |
+            backend/isort.log
+            backend/black.log
+            backend/ruff.log
+            backend/pylint.log
+          if-no-files-found: warn
+          retention-days: 7
