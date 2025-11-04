@@ -17,6 +17,7 @@ jobs:
       run:
         shell: bash
         working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
 
@@ -34,23 +35,60 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: ESLint (with fallback to ESLint 8)
+      - name: ESLint (try project config, else fallback flat-config)
         run: |
           set -e
-          run_eslint_cli() {
-            npx eslint . --ext .ts,.tsx,.js,.jsx
+          try_project_lint() {
+            if npm run | grep -q " lint"; then
+              npm run lint
+            elif [ -f ./node_modules/.bin/next ]; then
+              npx next lint
+            else
+              npx eslint . --ext .ts,.tsx,.js,.jsx
+            fi
           }
-          if npm run | grep -q " lint"; then
-            if npm run lint; then
-              exit 0
-            fi
-          else
-            if run_eslint_cli; then
-              exit 0
-            fi
+
+          if try_project_lint; then
+            echo "Project ESLint passed."
+            exit 0
           fi
-          echo "Falling back to ESLint v8..."
-          npm exec -y eslint@8.57.0 . --ext .ts,.tsx,.js,.jsx
+
+          echo "Falling back to flat-config ESLint 9..."
+          npm i -D eslint@9 @eslint/js@9 typescript-eslint@8 eslint-plugin-react@7 eslint-plugin-react-hooks@5 >/dev/null
+
+          cat > ci-eslint.config.mjs <<'EOF'
+          import js from "@eslint/js";
+          import tseslint from "typescript-eslint";
+          import reactPlugin from "eslint-plugin-react";
+          import reactHooks from "eslint-plugin-react-hooks";
+
+          export default [
+            js.configs.recommended,
+            ...tseslint.configs.recommended,
+            {
+              files: ["**/*.{js,jsx,ts,tsx}"],
+              languageOptions: {
+                ecmaVersion: "latest",
+                sourceType: "module",
+                parser: tseslint.parser,
+                parserOptions: { project: false, tsconfigRootDir: process.cwd() }
+              },
+              plugins: {
+                react: reactPlugin,
+                "react-hooks": reactHooks
+              },
+              rules: {
+                "react/jsx-uses-react": "off",
+                "react/react-in-jsx-scope": "off"
+              },
+              settings: {
+                react: { version: "detect" }
+              }
+            }
+          ];
+          EOF
+
+          npx eslint -c ./ci-eslint.config.mjs . --ext .ts,.tsx,.js,.jsx
 
       - name: Type check (no emit)
         run: |
