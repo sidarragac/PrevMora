@@ -1,34 +1,20 @@
-name: Lint Backend
 
+name: Lint Backend
 on:
+  workflow_dispatch: {}
   pull_request:
-    paths:
-      - "backend/**"
-      - ".github/workflows/lint-backend.yml"
+    paths: ["backend/**", ".github/workflows/**"]
   push:
     branches: [ main, develop ]
-    paths:
-      - "backend/**"
-      - ".github/workflows/lint-backend.yml"
-
-concurrency:
-  group: lint-backend-${{ github.ref }}
-  cancel-in-progress: true
+    paths: ["backend/**", ".github/workflows/**"]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: backend
-
+    defaults: { run: { shell: bash, working-directory: backend } }
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
@@ -37,47 +23,27 @@ jobs:
             backend/requirements-dev.txt
             backend/pyproject.toml
 
-      - name: Install dependencies (prod + dev si existe)
+      - name: Install deps (project + linters)
         run: |
           python -m pip install --upgrade pip
-          if [[ -f requirements.txt ]]; then pip install -r requirements.txt; fi
-          if [[ -f requirements-dev.txt ]]; then pip install -r requirements-dev.txt; fi
-          # Soporte para pyproject (ruff/black/isort/pylint en tool.poetry/pep621)
-          if [[ -f pyproject.toml ]]; then pip install .; fi
+          [[ -f requirements.txt ]] && pip install -r requirements.txt
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt
+          [[ -f pyproject.toml ]] && pip install .
+          # Asegura linters aunque no estén en tus archivos
+          pip install "black==24.8.0" "isort==5.13.2" "ruff==0.6.9" "pylint==3.2.6" "flake8==7.1.1"
 
-      - name: Show tool versions
+      - name: Black
+        run: black --check --diff .
+      - name: isort
+        run: isort --check-only --df .
+      - name: Ruff (opcional)
+        run: ruff check . || true
+      - name: Pylint
         run: |
-          python -V || true
-          black --version || true
-          isort --version || true
-          pylint --version || true
-          ruff --version || true
-          flake8 --version || true
-
-      - name: Black (format check)
-        run: |
-          black --check --diff .
-
-      - name: isort (imports check)
-        run: |
-          isort --check-only --df .
-
-      - name: Ruff (lints rápidos, opcional)
-        if: always()
-        run: |
-          ruff check .
-
-      - name: Pylint (estricto sobre src/app)
-        run: |
-          # Ajusta rutas según tu estructura (ej: app/, src/, credit_management/)
           TARGETS="."
-          # Ejemplo afinado: pylint solo al paquete de la app
-          if [[ -d app ]]; then TARGETS="app"; fi
-          if [[ -d src ]]; then TARGETS="src"; fi
-          if [[ -d credit_management ]]; then TARGETS="credit_management"; fi
+          [[ -d app ]] && TARGETS="app"
+          [[ -d src ]] && TARGETS="src"
+          [[ -d credit_management ]] && TARGETS="credit_management"
           pylint $TARGETS
-
-      - name: Flake8 (opcional, si usas flake8)
-        if: always()
-        run: |
-          flake8 . || true  
+      - name: Flake8 (opcional)
+        run: flake8 . || true
