@@ -1,9 +1,9 @@
 import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import Date, ForeignKey, Integer, Numeric, String, text
 from sqlalchemy.dialects.mssql import DATETIME2
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -24,4 +24,9 @@ class Installment(Base):
     )
     updated_at: Mapped[datetime.datetime] = mapped_column(
         DATETIME2, nullable=False, server_default=text("GETDATE()")
+    )
+
+    # Relación inversa hacia Portfolio (uno a muchos)
+    portfolio: Mapped[list["Portfolio"]] = relationship(
+        "Portfolio", back_populates="installment"
     )
