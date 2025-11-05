@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
 from enum import Enum
 
+from config.database import get_db_session  # type: ignore
 from fastapi import APIRouter, Depends, Query
+from models import Alert, Client, Credit, Installment  # type: ignore
 from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from config.database import get_db_session  # type: ignore
-from models import Alert, Client, Credit, Installment  # type: ignore
 
 router = APIRouter()
 
