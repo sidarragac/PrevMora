@@ -9,6 +9,8 @@ services:
       dockerfile: deploy/analytics.Dockerfile
     env_file:
       - ./.env
+    environment:
+      - APP_NAME=AnalyticsService
     restart: unless-stopped
     ports:
       - "8001:8000"
@@ -21,6 +23,8 @@ services:
       dockerfile: deploy/credit_management.Dockerfile
     env_file:
       - ./.env
+    environment:
+      - APP_NAME=CreditManagementService
     restart: unless-stopped
     ports:
       - "8002:8000"
@@ -33,6 +37,8 @@ services:
       dockerfile: deploy/portfolio_management.Dockerfile
     env_file:
       - ./.env
+    environment:
+      - APP_NAME=PortfolioManagementService
     restart: unless-stopped
     ports:
       - "8003:8000"
@@ -45,6 +51,8 @@ services:
       dockerfile: deploy/notifications.Dockerfile
     env_file:
       - ./.env
+    environment:
+      - APP_NAME=NotificationsService
     restart: unless-stopped
     ports:
       - "8004:8000"
@@ -57,9 +65,39 @@ services:
       dockerfile: deploy/stats.Dockerfile
     env_file:
       - ./.env
+    environment:
+      - APP_NAME=StatsService
     restart: unless-stopped
     ports:
       - "8005:8000"
+    networks:
+      - backend
+
+  payments:
+    build:
+      <<: *backend-build
+      dockerfile: deploy/payments.Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      - APP_NAME=PaymentsService
+    restart: unless-stopped
+    ports:
+      - "8006:8000"
+    networks:
+      - backend
+
+  analitycs_kpi:
+    build:
+      <<: *backend-build
+      dockerfile: deploy/analitys_KPI.Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      - APP_NAME=AnalyticsKPIService
+    restart: unless-stopped
+    ports:
+      - "8007:8000"
     networks:
       - backend
 
