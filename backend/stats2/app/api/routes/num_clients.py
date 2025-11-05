@@ -1,9 +1,7 @@
+from app.config.database import get_db_session
+from app.controllers.analytics import contacts_by_manager, fetch_portfolio
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.config.database import get_db_session
-from app.controllers.analytics import fetch_portfolio, contacts_by_manager
-
 
 router = APIRouter()
 

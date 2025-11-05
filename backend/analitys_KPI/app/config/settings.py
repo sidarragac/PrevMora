@@ -1,17 +1,23 @@
-import logging # para manejar los logs o mensajes de error
-import pathlib # para manejar rutas de archivos
+import logging  # para manejar los logs o mensajes de error
+import pathlib  # para manejar rutas de archivos
 
-from decouple import Config, RepositoryEnv # para manejar las variables de entorno
-from pydantic_settings import BaseSettings # para manejar las configuraciones de la aplicacion
+from decouple import Config, RepositoryEnv  # para manejar las variables de entorno
+from pydantic_settings import (
+    BaseSettings,
+)  # para manejar las configuraciones de la aplicacion
 
 logging.basicConfig(
     level=logging.INFO,  # nivel mínimo que quieres mostrar (DEBUG, INFO, WARNING, etc.)
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-ROOT_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent.parent.resolve() 
+ROOT_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent.parent.resolve()
 ENV_PATH: pathlib.Path = ROOT_DIR / ".env"
-config = Config(RepositoryEnv(str(ENV_PATH)))#para manejar las variables de entorno-para poder usarlas en el proyecto
+config = Config(
+    RepositoryEnv(str(ENV_PATH))
+)  # para manejar las variables de entorno-para poder usarlas en el proyecto
+
+
 class Stats2Settings(BaseSettings):
     APP_NAME: str = config("APP_NAME", default="PrevMora-Stats2")
     APP_VERSION: str = config("APP_VERSION", default="0.1.0")
@@ -20,13 +26,13 @@ class Stats2Settings(BaseSettings):
     DEBUG: bool = config("DEBUG", cast=bool, default=False)
     ENVIRONMENT: str = config("ENVIRONMENT", default="local")
     LOG_LEVEL: str = config("LOG_LEVEL", default="DEBUG")
-    
+
     API_PREFIX: str = "/api"
     DOCS_URL: str = "/docs"
     OPENAPI_URL: str = "/openapi.json"
     REDOC_URL: str = "/redoc"
     OPENAPI_PREFIX: str = ""
-    
+
     # Database
     DB_DRIVER: str = config("DB_DRIVER", default="mssql+aioodbc")
     DB_USER: str = config("DB_USER")
@@ -34,7 +40,7 @@ class Stats2Settings(BaseSettings):
     DB_HOST: str = config("DB_HOST")
     DB_PORT: int = config("DB_PORT", cast=int, default=1433)
     DB_NAME: str = config("DB_NAME")
-    
+
     class Config:
         case_sensitive = True
         env_file = f"{ROOT_DIR}/.env"
@@ -44,6 +50,7 @@ class Stats2Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         return f"{self.DB_DRIVER}://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes&Encrypt=yes"
+
     @property
     def fast_kwargs(self) -> dict:
         return {
@@ -55,6 +62,6 @@ class Stats2Settings(BaseSettings):
             "openapi_url": self.OPENAPI_URL if self.DEBUG else None,
             "redoc_url": self.REDOC_URL if self.DEBUG else None,
         }
+
+
 settings = Stats2Settings()
-
-

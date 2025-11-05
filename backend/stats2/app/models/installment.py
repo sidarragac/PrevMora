@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from sqlalchemy import Date, ForeignKey, Integer, Numeric, String, text
 from sqlalchemy.dialects.mssql import DATETIME2

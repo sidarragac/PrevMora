@@ -14,5 +14,3 @@ class MesSeleccion(BaseModel):
     Octubre: bool = False
     Noviembre: bool = False
     Diciembre: bool = False
-
-

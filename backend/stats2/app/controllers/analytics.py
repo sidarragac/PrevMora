@@ -1,14 +1,12 @@
 from typing import Dict, List
 
+from app.models.client import Client
+from app.models.credit import Credit
+from app.models.installment import Installment
+from app.models.manager import Manager
+from app.models.portafolio import Portfolio
 from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.models.installment import Installment
-from app.models.portafolio import Portfolio
-from app.models.manager import Manager
-from app.models.credit import Credit
-from app.models.client import Client
-
 
 # Lista de meses en español en orden
 MONTHS: List[str] = [
@@ -154,7 +152,11 @@ async def calculate_installments_by_month(session: AsyncSession) -> Dict:
         f"Total de cuotas en {MONTHS[i]}: {len(installments_grouped[MONTHS[i]])}, "
         f"Numero de cuotas Vencidas: {len(overdue_grouped[MONTHS[i]])}, "
         f"Porcentaje  Morosidad: {porcentaje_morosidad[i]}%"
-        + (", comparacion con el mes anterior: " + comparacion_mes_anterior[i] if i > 0 else ", comparacion con el mes anterior: 0")
+        + (
+            ", comparacion con el mes anterior: " + comparacion_mes_anterior[i]
+            if i > 0
+            else ", comparacion con el mes anterior: 0"
+        )
         for i in range(12)
     ]
 
@@ -324,4 +326,3 @@ async def contacts_by_manager(session: AsyncSession) -> Dict:
     # Orden opcional por mayor número de contactos
     items.sort(key=lambda x: x["contacts_count"], reverse=True)
     return {"items": items, "count": len(items)}
-

@@ -1,15 +1,13 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.config.settings import settings
 from app.config.database import get_db_session
+from app.config.settings import settings
 from app.controllers.analytics import (
     MONTHS,
     average_recovery_for_selected_months,
     calculate_money_recovery_by_month,
 )
 from app.schemas.analytics import MesSeleccion
-
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
