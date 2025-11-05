@@ -17,7 +17,7 @@ This is a reusable template for building FastAPI microservices with a clean, lay
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
+export APP_NAME="payments"  # ...and other required variables
 uvicorn app.main:app --reload
 ```
 
@@ -27,7 +27,7 @@ uvicorn app.main:app --reload
 pytest -q
 ```
 
-Environment variables can be configured in `.env` (see `.env.example`).
+Environment variables should be provided directly through your shell or orchestration environment.
 
 ### Payment Gateway Integration
 
@@ -37,7 +37,7 @@ This microservice includes integration with an external payment gateway for proc
 
 **Endpoint:** `POST /api/{APP_NAME}/v1/payments/initialize_payment`
 
-Note: Replace `{APP_NAME}` with the value configured in your `.env` file (e.g., "payments")
+Note: Replace `{APP_NAME}` with the value configured in your environment (e.g., `APP_NAME=payments`)
 
 **Description:** Initializes a payment session by fetching client credit details, creating a payment session in the external payment gateway, and **automatically processing the payment** by marking all pending installments as paid.
 
