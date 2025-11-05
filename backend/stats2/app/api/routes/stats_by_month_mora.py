@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get("/health")
 async def health():
     return {"service": settings.APP_NAME, "status": "ok"}
-
+    
 
 @router.get("/installments/by-month")
 async def installments_by_month(db: AsyncSession = Depends(get_db_session)):
