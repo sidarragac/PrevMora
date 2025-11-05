@@ -8,6 +8,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
+
 class Stats2Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=True,
