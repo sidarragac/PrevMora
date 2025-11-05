@@ -1,23 +1,27 @@
-import logging
 import pathlib
 
-from decouple import Config, RepositoryEnv
-from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent.parent.resolve()
 ENV_PATH: pathlib.Path = ROOT_DIR / ".env"
 
-config = Config(RepositoryEnv(str(ENV_PATH)))
-
 
 class BackendBaseSettings(BaseSettings):
-    APP_NAME: str = config("APP_NAME", default="PrevMora-Template")
-    APP_VERSION: str = config("APP_VERSION", default="0.1.0")
-    TIMEZONE: str = config("TIMEZONE", default="UTC-05")
-    DESCRIPTION: str = config("DESCRIPTION", default="")
-    DEBUG: bool = config("DEBUG", cast=bool, default=False)
-    ENVIRONMENT: str = config("ENVIRONMENT", default="local")
-    LOG_LEVEL: str = config("LOG_LEVEL", default="DEBUG")
+    model_config = SettingsConfigDict(
+        case_sensitive=True,
+        env_file=ENV_PATH,
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    APP_NAME: str = Field(default="PrevMora-Template", env="APP_NAME")
+    APP_VERSION: str = Field(default="0.1.0", env="APP_VERSION")
+    TIMEZONE: str = Field(default="UTC-05", env="TIMEZONE")
+    DESCRIPTION: str = Field(default="", env="DESCRIPTION")
+    DEBUG: bool = Field(default=False, env="DEBUG")
+    ENVIRONMENT: str = Field(default="local", env="ENVIRONMENT")
+    LOG_LEVEL: str = Field(default="DEBUG", env="LOG_LEVEL")
 
     API_PREFIX: str = "/api"
     DOCS_URL: str = "/docs"
@@ -26,18 +30,12 @@ class BackendBaseSettings(BaseSettings):
     OPENAPI_PREFIX: str = ""
 
     # Database
-    DB_DRIVER: str = config("DB_DRIVER", default="mssql+aioodbc")
-    DB_USER: str = config("DB_USER")
-    DB_PASSWORD: str = config("DB_PASSWORD")
-    DB_HOST: str = config("DB_HOST")
-    DB_PORT: int = config("DB_PORT", cast=int, default=1433)
-    DB_NAME: str = config("DB_NAME")
-
-    class Config:
-        case_sensitive = True
-        env_file = f"{ROOT_DIR}/.env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+    DB_DRIVER: str = Field(default="mssql+aioodbc", env="DB_DRIVER")
+    DB_USER: str = Field(..., env="DB_USER")
+    DB_PASSWORD: str = Field(..., env="DB_PASSWORD")
+    DB_HOST: str = Field(..., env="DB_HOST")
+    DB_PORT: int = Field(default=1433, env="DB_PORT")
+    DB_NAME: str = Field(..., env="DB_NAME")
 
     @property
     def DATABASE_URL(self) -> str:
