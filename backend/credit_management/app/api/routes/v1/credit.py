@@ -34,9 +34,14 @@ async def create_credit(
     controller = CreditController()
     return await controller.create(session, credit)
 
-@router.patch("/update_credit/{credit_id}", response_model=CreditResponse, tags=["Credits"])
+
+@router.patch(
+    "/update_credit/{credit_id}", response_model=CreditResponse, tags=["Credits"]
+)
 async def update_credit(
-    credit_id: int, credit: CreditUpdate, session: AsyncSession = Depends(get_db_session)
+    credit_id: int,
+    credit: CreditUpdate,
+    session: AsyncSession = Depends(get_db_session),
 ):
     controller = CreditController()
     return await controller.update(session, credit_id, credit)

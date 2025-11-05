@@ -1,6 +1,7 @@
 import { UploadExcelError, UploadExcelResponse } from '@/types/excel';
 
 const API_BASE_URL = 'http://localhost:8000/api/PrevMora-Template/v1';
+const API_BASE_URL_PORTFOLIO = 'http://localhost:8001/api/PrevMora-Template/v1';
 
 export class ExcelService {
   /**
@@ -146,6 +147,49 @@ export class ExcelService {
         success: false,
         error: errorMessage,
       };
+    }
+  }
+
+  /** Upload Excel file for Portfolio Management */
+  static async uploadPortfolioExcel(file: File): Promise<{
+    success: boolean;
+    data?: UploadExcelResponse;
+    error?: string;
+  }> {
+    try {
+      // const validation = this.validateFile(file);
+      // if (!validation.valid) {
+      //   return { success: false, error: validation.error };
+      // }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(
+        `${API_BASE_URL_PORTFOLIO}/portfolio-management/upload-excel`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Error ${response.status}: ${response.statusText}`;
+        try {
+          const errorData: UploadExcelError = await response.json();
+          if (typeof errorData.detail === 'string') {
+            errorMessage = errorData.detail;
+          }
+        } catch {}
+        return { success: false, error: errorMessage };
+      }
+
+      const data: UploadExcelResponse = await response.json();
+      return { success: true, data };
+    } catch (error) {
+      let errorMessage = 'Error desconocido al subir el archivo';
+      if (error instanceof Error) errorMessage = error.message;
+      return { success: false, error: errorMessage };
     }
   }
 

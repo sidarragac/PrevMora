@@ -2,7 +2,16 @@ import Link from 'next/link';
 import React from 'react';
 
 import { SignOutButton } from '@clerk/nextjs';
-import { File, HandCoins, Home, LogOut, Wallet } from 'lucide-react';
+import {
+  BookOpenCheck,
+  ChartBar,
+  File,
+  FileArchive,
+  HandCoins,
+  Home,
+  LogOut,
+  Wallet,
+} from 'lucide-react';
 
 import Header from '@/components/dashboard/siderbar/header';
 import NavBtn from '@/components/dashboard/siderbar/nav-btn';
@@ -68,12 +77,37 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             restringed={false}
           />
           <NavBtn
-            text="Subir Excel"
-            goto="/plataforma/subir-excel"
-            iconActive={<File className="size-6" />}
-            iconInactive={<File className="size-6" />}
+            text="Kpis"
+            goto="/plataforma/kpis"
+            iconActive={<ChartBar className="size-6" />}
+            iconInactive={<ChartBar className="size-6" />}
             restringed={false}
           />
+          <ul className="menu bg-base-200 rounded-box w-56">
+            <li>
+              <details open>
+                <summary>
+                  <BookOpenCheck /> Subir Excel
+                </summary>
+                <ul className="flex flex-col gap-2">
+                  <NavBtn
+                    text="Excel Principal"
+                    goto="/plataforma/subir-excel"
+                    iconActive={<File className="size-6" />}
+                    iconInactive={<File className="size-6" />}
+                    restringed={false}
+                  />
+                  <NavBtn
+                    text="Excel Portafolio"
+                    goto="/plataforma/subir-excel-portafolio"
+                    iconActive={<FileArchive className="size-6" />}
+                    iconInactive={<FileArchive className="size-6" />}
+                    restringed={false}
+                  />
+                </ul>
+              </details>
+            </li>
+          </ul>
 
           {/* Spacer to push logout button to bottom */}
           <div className="flex-1"></div>

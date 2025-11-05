@@ -25,18 +25,18 @@ async def get_dashboard_data(
 ):
     """
     Get consolidated dashboard data in a single request.
-    
+
     This endpoint replaces 7 separate API calls with one, retrieving:
     - Total counts for all entities (clients, credits, alerts, etc.)
     - Recent alerts
     - Recent installments
     - Recent portfolio managements
     - Recent reconciliations
-    
+
     Args:
         pagination: Pagination parameters for recent items
         session: Database session
-        
+
     Returns:
         DashboardData: Consolidated dashboard information
     """

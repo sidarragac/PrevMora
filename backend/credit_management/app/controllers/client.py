@@ -7,6 +7,7 @@ from ..models.Alert import Alert
 from ..models.Client import Client
 from ..models.Credit import Credit
 from ..models.Installment import Installment
+from ..models.Manager import Manager
 from ..models.Portfolio import Portfolio
 from ..models.Reconciliation import Reconciliation
 from ..schemas.Client import (
@@ -16,6 +17,7 @@ from ..schemas.Client import (
     ClientList,
     ClientResponse,
     ClientUpdate,
+    CreditCalculatedInstallmentResponse,
     CreditDetailResponse,
     InstallmentDetailResponse,
     PortfolioDetailResponse,
@@ -50,14 +52,14 @@ class ClientController(BaseController):
         - All reconciliations related to the client's credits
         """
 
-        # Traer el cliente con todas sus relaciones
         query = (
             select(Client)
             .where(Client.id == client_id)
             .options(
                 selectinload(Client.credit)
                 .selectinload(Credit.installment)
-                .selectinload(Installment.portfolio),
+                .selectinload(Installment.portfolio)
+                .selectinload(Portfolio.manager),
                 selectinload(Client.alert),
             )
         )
@@ -68,7 +70,6 @@ class ClientController(BaseController):
         if not client:
             raise HTTPException(status_code=404, detail=self.not_found_message)
 
-        # Construir los créditos con sus cuotas y gestiones
         credits_data = []
         total_installments = 0
         total_portfolio_managements = 0
@@ -84,9 +85,12 @@ class ClientController(BaseController):
                 portfolio_data = []
                 for portfolio in installment.portfolio:
                     total_portfolio_managements += 1
-                    portfolio_data.append(
-                        PortfolioDetailResponse.model_validate(portfolio)
+                    portfolio_response = PortfolioDetailResponse.model_validate(
+                        portfolio
                     )
+                    if portfolio.manager:
+                        portfolio_response.manager_name = portfolio.manager.name
+                    portfolio_data.append(portfolio_response)
 
                 installment_response = InstallmentDetailResponse.model_validate(
                     installment
@@ -98,12 +102,10 @@ class ClientController(BaseController):
             credit_response.installments = installments_data
             credits_data.append(credit_response)
 
-        # Traer alertas del cliente
         alerts_data = [
             AlertDetailResponse.model_validate(alert) for alert in client.alert
         ]
 
-        # Traer reconciliaciones relacionadas con los payment_references del cliente
         reconciliations_data = []
         if payment_references:
             reconciliation_query = select(Reconciliation).where(
@@ -116,13 +118,11 @@ class ClientController(BaseController):
                 for rec in reconciliations
             ]
 
-        # Construir la respuesta completa
         client_response = ClientCompleteResponse.model_validate(client)
         client_response.credits = credits_data
         client_response.alerts = alerts_data
         client_response.reconciliations = reconciliations_data
 
-        # Agregar estadísticas
         client_response.total_credits = len(credits_data)
         client_response.total_installments = total_installments
         client_response.total_portfolio_managements = total_portfolio_managements
@@ -130,3 +130,71 @@ class ClientController(BaseController):
         client_response.total_reconciliations = len(reconciliations_data)
 
         return client_response
+
+    async def get_credits_detailed(
+        self, session: AsyncSession, client_id: int
+    ) -> list[CreditCalculatedInstallmentResponse]:
+        """
+        Get detailed credit information for a specific client.
+        """
+        query = (
+            select(Credit)
+            .where(Credit.client_id == client_id)
+            .options(
+                selectinload(Credit.installment)
+                .selectinload(Installment.portfolio)
+                .selectinload(Portfolio.manager)
+            )
+        )
+
+        result = await session.execute(query)
+        credits = result.scalars().all()
+
+        if not credits:
+            raise HTTPException(
+                status_code=404, detail="No credits found for the client"
+            )
+
+        credits_data = []
+
+        for credit in credits:
+            installments_data = []
+            for installment in credit.installment:
+                portfolio_data = []
+                for portfolio in installment.portfolio:
+                    portfolio_response = PortfolioDetailResponse.model_validate(
+                        portfolio
+                    )
+                    if portfolio.manager:
+                        portfolio_response.manager_name = portfolio.manager.name
+                    portfolio_data.append(portfolio_response)
+
+                installment_response = InstallmentDetailResponse.model_validate(
+                    installment
+                )
+                installment_response.portfolio = portfolio_data
+                installments_data.append(installment_response)
+
+            credit_response = CreditCalculatedInstallmentResponse.model_validate(credit)
+            credit_response.installments = installments_data
+            credits_data.append(credit_response)
+
+        for credit in credits:
+            query_reconciliations = select(Reconciliation).where(
+                Reconciliation.payment_reference == credit.payment_reference
+            )
+            result_reconciliations = await session.execute(query_reconciliations)
+
+            sum_payments = sum(
+                rec.payment_amount for rec in result_reconciliations.scalars().all()
+            )
+
+            for credit_data in credits_data:
+                if credit_data.id == credit.id:
+                    credit_data.total_paid = sum_payments
+                    credit_data.total_pending = int(
+                        credit_data.disbursement_amount - sum_payments
+                    )
+                    break
+
+        return credits_data

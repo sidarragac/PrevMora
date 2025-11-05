@@ -17,6 +17,11 @@ import { UploadExcelResponse } from '@/types/excel';
 interface UploadExcelProps {
   onUploadSuccess?: (response: UploadExcelResponse) => void;
   onUploadError?: (error: string) => void;
+  uploader?: (file: File) => Promise<{
+    success: boolean;
+    data?: UploadExcelResponse;
+    error?: string;
+  }>;
 }
 
 interface UploadState {
@@ -31,6 +36,7 @@ interface UploadState {
 export default function UploadExcel({
   onUploadSuccess,
   onUploadError,
+  uploader,
 }: UploadExcelProps) {
   const [uploadState, setUploadState] = useState<UploadState>({
     isDragOver: false,
@@ -122,8 +128,10 @@ export default function UploadExcel({
         }));
       }, 200);
 
-      // Use the Excel service
-      const result = await ExcelService.uploadExcel(file);
+      // Use provided uploader or default to credit management upload
+      const result = await (uploader
+        ? uploader(file)
+        : ExcelService.uploadExcel(file));
 
       if (progressInterval) {
         clearInterval(progressInterval);

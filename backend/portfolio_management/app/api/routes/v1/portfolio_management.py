@@ -22,6 +22,7 @@ router = APIRouter()
 
 loading_tasks = {}
 
+
 @router.post("/upload-excel", response_model=Dict[str, Any])
 async def upload_excel(
     background_tasks: BackgroundTasks,
@@ -30,7 +31,7 @@ async def upload_excel(
 ):
     """
     Upload an Excel file with reconciliation data.
-    
+
     Expected Excel columns:
     - Fecha: Transaction date
     - Referencia_Pago: Payment reference
@@ -109,9 +110,7 @@ async def validate_reconciliation_excel(file: UploadFile = File(...)):
         )
 
 
-async def process_excel_background(
-    task_id: str, file_path: str, session: AsyncSession
-):
+async def process_excel_background(task_id: str, file_path: str, session: AsyncSession):
     """
     Background task to process reconciliation Excel file.
     """

@@ -7,8 +7,6 @@ import {
   Upload,
 } from 'lucide-react';
 
-import ProcessExcelWrapper from '@/components/excel/process-excel-wrapper';
-import ServerStatus from '@/components/excel/server-status';
 import UploadExcelWrapper from '@/components/excel/upload-excel-wrapper';
 
 export const dynamic = 'force-dynamic';
@@ -22,7 +20,7 @@ export default function SubirExcelPage() {
         </div>
         <div>
           <h1 className="text-base-content text-3xl font-bold">
-            Subir Archivo Excel
+            Subir Archivo Excel Principal
           </h1>
           <p className="text-base-content/70">
             Importa datos de créditos desde un archivo Excel
