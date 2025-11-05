@@ -20,7 +20,6 @@ async function getClients(): Promise<ClientsResponse | null> {
         page: 1,
         page_size: 50,
       }),
-      cache: 'no-store', // Para desarrollo, en producción usar revalidate
     });
 
     if (!response.ok) {

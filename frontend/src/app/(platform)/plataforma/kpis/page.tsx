@@ -35,7 +35,6 @@ async function fetchOverdue(searchParams?: {
     const res = await fetch(url.toString(), {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
     });
     if (!res.ok) throw new Error('Failed to fetch overdue installments');
     return await res.json();
@@ -53,12 +52,13 @@ function formatCurrency(amount: number) {
   }).format(amount || 0);
 }
 
-export default async function KpisPage({
-  searchParams,
-}: {
-  searchParams?: { month_ref?: string; month_cmp?: string };
-}) {
-  const data = await fetchOverdue(searchParams);
+interface KpisPageProps {
+  searchParams?: Promise<{ month_ref?: string; month_cmp?: string }>;
+}
+
+export default async function KpisPage({ searchParams }: KpisPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const data = await fetchOverdue(resolvedSearchParams);
 
   if (!data) {
     return (

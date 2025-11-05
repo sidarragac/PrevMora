@@ -20,7 +20,6 @@ async function fetchDashboardData(): Promise<DashboardData | null> {
         page: 1,
         page_size: 50,
       }),
-      cache: 'no-store',
     });
 
     if (!res.ok) {

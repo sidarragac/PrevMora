@@ -36,7 +36,6 @@ async function getClientData(id: string): Promise<ClientCompleteData | null> {
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Para desarrollo, en producción usar revalidate
       }
     );
 
@@ -116,14 +115,16 @@ export default async function ClientDetailPage({
                 </div>
               </div>
             </div>
-            <EditClientButton
-              clientId={clientData.id}
-              initialEmail={clientData.email}
-              initialPhone={clientData.phone}
-              initialAddress={clientData.address}
-              initialZone={clientData.zone}
-              initialStatus={clientData.status}
-            />
+            <div className="flex gap-2">
+              <EditClientButton
+                clientId={clientData.id}
+                initialEmail={clientData.email}
+                initialPhone={clientData.phone}
+                initialAddress={clientData.address}
+                initialZone={clientData.zone}
+                initialStatus={clientData.status}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -188,11 +189,18 @@ export default async function ClientDetailPage({
 
       {/* Credits Section */}
       <div className="card bg-base-100 border-base-200 border shadow-lg">
-        <div className="card-header bg-base-200 p-4">
+        <div className="card-header bg-base-200 flex justify-between p-4">
           <h3 className="card-title flex items-center gap-2 text-lg font-semibold">
             <CreditCard className="text-primary h-5 w-5" />
             Créditos ({clientData.credits.length})
           </h3>
+
+          <Link
+            href={`/plataforma/cartera/cliente/credits_detailed/${id}`}
+            className="btn btn-primary btn-sm"
+          >
+            Ver créditos detallados
+          </Link>
         </div>
         <div className="card-body p-6">
           <div className="space-y-4">
