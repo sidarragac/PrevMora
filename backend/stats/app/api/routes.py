@@ -1,9 +1,9 @@
-import pathlib
-import sys
 from datetime import datetime, timedelta
 from enum import Enum
 
+from config.database import get_db_session  # type: ignore
 from fastapi import APIRouter, Depends, Query
+from models import Alert, Client, Credit, Installment  # type: ignore
 from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,19 +23,6 @@ class MonthEnum(str, Enum):
     Octubre = "Octubre"
     Noviembre = "Noviembre"
     Diciembre = "Diciembre"
-
-
-# Add notifications app path to import its models and DB session
-_BACKEND_DIR = pathlib.Path(__file__).resolve().parents[3]
-_NOTIFICATIONS_APP_DIR = _BACKEND_DIR / "notifications" / "app"
-if str(_NOTIFICATIONS_APP_DIR) not in sys.path:
-    sys.path.append(str(_NOTIFICATIONS_APP_DIR))
-
-from config.database import get_db_session  # type: ignore  # noqa: E402
-from models.alert import Alert  # type: ignore  # noqa: E402
-from models.client import Client  # type: ignore  # noqa: E402
-from models.credit import Credit  # type: ignore  # noqa: E402
-from models.installment import Installment  # type: ignore  # noqa: E402
 
 
 @router.get("/client-alerts")
